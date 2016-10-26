@@ -15,6 +15,7 @@ content[2] = new Array();
 content[2][0] = "实验指导";
 content[2][1] = "实验指导";
 content[2][2] = "";
+
 //实验的具体内容需要第二层决定填写什么
 
 //确定每个content的class

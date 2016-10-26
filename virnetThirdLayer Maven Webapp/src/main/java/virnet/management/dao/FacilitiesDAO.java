@@ -54,7 +54,7 @@ public class FacilitiesDAO extends BaseDAO {
 	    	return o;
 	    }
 
-	    // ////////////////////查询单个完毕////////////////
+	    // ////////////////////��ѯ�������////////////////
 
 	   
 	    @SuppressWarnings({ "rawtypes" })

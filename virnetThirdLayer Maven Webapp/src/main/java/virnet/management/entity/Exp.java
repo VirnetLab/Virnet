@@ -91,6 +91,7 @@ public class Exp implements java.io.Serializable {
 	public String getExpInstruct() {
 		return this.expInstruct;
 	}
+	
 
 	public void setExpInstruct(String expInstruct) {
 		this.expInstruct = expInstruct;

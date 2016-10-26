@@ -7,6 +7,7 @@ import virnet.management.combinedao.ClassInfoCDAO;
 import virnet.management.combinedao.CourseInfoCDAO;
 import virnet.management.combinedao.ExpInfoCDAO;
 import virnet.management.combinedao.GroupInfoCDAO;
+import virnet.management.combinedao.FacilitiesInfoCDAO;
 
 public class InformationService {
 	
@@ -16,6 +17,7 @@ public class InformationService {
 	private GroupInfoCDAO gDAO = new GroupInfoCDAO();
 	private CourseInfoCDAO cDAO = new CourseInfoCDAO();
 	private ClassInfoCDAO classDAO = new ClassInfoCDAO();
+	private FacilitiesInfoCDAO fDAO =new FacilitiesInfoCDAO();
 
 	
 	public Map<String, Object> loadInfo(String user, String id, int page, String select){
@@ -36,6 +38,7 @@ public class InformationService {
 		case "my-group": query = new MyGroup(); break;
 		case "my-exp": query = new MyExp(); break;
 		case "enter-exp": query = new EnterExp(); break;
+		case "facilities-management":query =new FacilitiesManagement();break;
 		default: break;
 		}
 		
@@ -54,6 +57,7 @@ public class InformationService {
 		case "course" : map = this.cDAO.showCourseDetail(id, name); break;
 		case "class" : map = this.classDAO.showClassDetail(id, name); break;
 		case "group" : break;
+//		case ""
 		default : break;
 		}
 	
@@ -67,7 +71,8 @@ public class InformationService {
 		case "exp-management" : map = this.eDAO.Edit(name); break;
 		case "course-management" : map = this.cDAO.Edit(name); break;
 		case "class-management" : map = this.classDAO.Edit(name); break;
-		case "time-management" : 
+		case "time-management" :
+//		case "facilities-management" : map = this.fDAO.Edit(name); break;
 		}
 		
 		return map;
@@ -80,6 +85,7 @@ public class InformationService {
 		case "exp-management" : map = this.eDAO.Add(); break;
 		case "course-management" : map = this.cDAO.Add(); break;
 		case "class-management" :
+		case "facilities-management" : map = this.fDAO.Add();break;
 		case "time-management" : 
 		}
 		
@@ -91,6 +97,7 @@ public class InformationService {
 		switch(id){
 		case "exp-management" : r = this.eDAO.save(name, map); break;
 		case "course-management" : r = this.cDAO.save(name, map);break;
+	//	case "facilities-management" : r = this.fDAO.save(name, map);break;
 		default : r = null;
 		}
 		
