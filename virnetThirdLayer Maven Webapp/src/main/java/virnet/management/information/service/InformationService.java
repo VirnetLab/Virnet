@@ -53,11 +53,12 @@ public class InformationService {
 		//Divided by key : user, experiment, course, class, group
 		switch(key){
 		case "user" : break;
-		case "exp" : map = this.eDAO.showExpDetail(id, name); break;
+		case "exp" : map = this.eDAO.showExpDetail(id, name);break;
 		case "course" : map = this.cDAO.showCourseDetail(id, name); break;
 		case "class" : map = this.classDAO.showClassDetail(id, name); break;
 		case "group" : break;
-//		case ""
+		case "facilities" :	Integer pri_key=Integer.parseInt(name); 
+							map = this.fDAO.showFacilitiesDetail(id,pri_key);break;
 		default : break;
 		}
 	
@@ -66,13 +67,14 @@ public class InformationService {
 
 	public Map<String, Object> Edit(String user, String id, String name){
 		Map<String, Object> map = new HashMap<String, Object>();
-		
+		System.out.println(id);
 		switch(id){
 		case "exp-management" : map = this.eDAO.Edit(name); break;
 		case "course-management" : map = this.cDAO.Edit(name); break;
 		case "class-management" : map = this.classDAO.Edit(name); break;
 		case "time-management" :
-//		case "facilities-management" : map = this.fDAO.Edit(name); break;
+		case "facilities-management" : 	Integer pri_key=Integer.parseInt(name);
+										map = this.fDAO.Edit(pri_key); break;
 		}
 		
 		return map;
@@ -85,7 +87,7 @@ public class InformationService {
 		case "exp-management" : map = this.eDAO.Add(); break;
 		case "course-management" : map = this.cDAO.Add(); break;
 		case "class-management" :
-		case "facilities-management" : map = this.fDAO.Add();break;
+		case "facilities-management" :map = this.fDAO.Add();break;
 		case "time-management" : 
 		}
 		
@@ -97,10 +99,17 @@ public class InformationService {
 		switch(id){
 		case "exp-management" : r = this.eDAO.save(name, map); break;
 		case "course-management" : r = this.cDAO.save(name, map);break;
-	//	case "facilities-management" : r = this.fDAO.save(name, map);break;
+		case "facilities-management" :	Integer pri_key;
+										if(name.equals(""))                  //new facilities
+											pri_key=0;
+										else
+											pri_key=Integer.parseInt(name);
+										r = this.fDAO.save(pri_key, map);
+										break;
+										
 		default : r = null;
 		}
 		
-		return r;
+	return r;
 	}
 }

@@ -42,7 +42,7 @@ function showContent(id, page, select){
 
 	$("#content").empty();
 	$("#content").append($("<h class='tittle'><i class='icon-spinner icon-spin icon-4x'></i>正在加载内容</h>"));
-	alert(id);
+//alert(id);
 	//fetch data from server
 	fetchData(id, username, page, select);
 }

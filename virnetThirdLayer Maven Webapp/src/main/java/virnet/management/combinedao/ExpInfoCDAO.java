@@ -354,6 +354,7 @@ public class ExpInfoCDAO {
 		Iterator<String> keylist = key.iterator();
 		while(keylist.hasNext()){
 			String k = keylist.next();
+			System.out.println(k);
 			switch(k){
 			case "expName" : exp.setExpName((String) map.get(k)); break;
 			case "expStanTime" : exp.setExpStanTime((String) map.get(k)); break;

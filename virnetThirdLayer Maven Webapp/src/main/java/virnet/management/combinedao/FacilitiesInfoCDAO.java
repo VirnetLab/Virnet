@@ -32,14 +32,14 @@ public class FacilitiesInfoCDAO {
 //	}
 
 	
- 	public Map<String, Object> showFacilityDetail(String id, String name){
+ 	public Map<String, Object> showFacilitiesDetail(String id, Integer pri_key){
 		Map<String, Object> map = new HashMap<String, Object>();
 		
 		List<List<Map<String, Object>>> list = new ArrayList<List<Map<String, Object>>>();
 		
 		
 		Map<String, Object> tittle = new HashMap<String, Object>();
-		tittle.put("data", "实验模板 <i class='icon-double-angle-right'></i> " + name);		
+		tittle.put("data", "设备" + pri_key +"<i class='icon-double-angle-right'></i> ");		
 		
 		String returnid = id;
 		
@@ -52,7 +52,7 @@ public class FacilitiesInfoCDAO {
 									 button.put("content", "修改设备详情");
 									 button.put("class", "btn button-new");
 									 button.put("click", "editContent();");
-									 list = FacilitiesManagement(1, false); 
+									 list = FacilitiesManagement(pri_key, false); 
 									 map.put("button", button);
 									 returnid = "facilities-management";
 									 break;//管理员的设备管理 --- 返回实验模板， 包括进入第二层
@@ -114,7 +114,7 @@ public class FacilitiesInfoCDAO {
 			if(isEdit){
 				map22.put("class", "btn btn-link edit");
 				map22.put("onclick", "editable(this);");
-				map22.put("value", "getFacilitiesOrder");
+				map22.put("value", "facilitiesOrder");
 			}
 			
 			list2.add(map21);
@@ -130,7 +130,7 @@ public class FacilitiesInfoCDAO {
 			if(isEdit){
 				map32.put("class", "btn btn-link edit");
 				map32.put("onclick", "editable(this);");
-				map32.put("value", "getFacilitiesType");
+				map32.put("value", "facilitiesType");
 			}
 			
 			list3.add(map31);
@@ -146,7 +146,7 @@ public class FacilitiesInfoCDAO {
 			if(isEdit){
 				map42.put("class", "btn btn-link edit");
 				map42.put("onclick", "editable(this);");
-				map42.put("value", "getFacilitiesNumberUsePort");
+				map42.put("value", "facilitiesNumberUsePort");
 			}
 			
 			list4.add(map41);
@@ -162,7 +162,7 @@ public class FacilitiesInfoCDAO {
 			if(isEdit){
 				map52.put("class", "btn btn-link edit");
 				map52.put("onclick", "editable(this);");
-				map52.put("value", "getFacilitiesNumberPort");
+				map52.put("value", "facilitiesNumberPort");
 			}
 			
 			list5.add(map51);
@@ -178,7 +178,7 @@ public class FacilitiesInfoCDAO {
 			if(isEdit){
 				map62.put("class", "btn btn-link edit");
 				map62.put("onclick", "editable(this);");
-				map62.put("value", "getFacilitiesFactory");
+				map62.put("value", "facilitiesFactory");
 			}
 			
 			list6.add(map61);
@@ -194,7 +194,7 @@ public class FacilitiesInfoCDAO {
 			if(isEdit){
 				map72.put("class", "btn btn-link edit");
 				map72.put("onclick", "editable(this);");
-				map72.put("value", "getFacilitiesIp");
+				map72.put("value", "facilitiesIp");
 			}
 			
 			list7.add(map71);
@@ -271,12 +271,13 @@ public class FacilitiesInfoCDAO {
 	 * @return the data show on the page
 	 */
 	public Map<String, Object> Edit(Integer id){
+		System.out.println(id);
 		Map<String, Object> map = new HashMap<String, Object>();
 		
 		List<List<Map<String, Object>>> list = new ArrayList<List<Map<String, Object>>>();
 		
 		Map<String, Object> tittle = new HashMap<String, Object>();
-		tittle.put("data", "实验设备 <i class='icon-double-angle-right'></i> " + id);
+		tittle.put("data", "实验设备"+id+" <i class='icon-double-angle-right'></i> "  );
 		
 		list = FacilitiesManagement(id, true);
 		
@@ -293,6 +294,7 @@ public class FacilitiesInfoCDAO {
 	}
 	
 	public Map<String, Object> Add(){
+
 		Map<String, Object> map = new HashMap<String, Object>();
 		
 		List<List<Map<String, Object>>> list = new ArrayList<List<Map<String, Object>>>();
@@ -323,8 +325,7 @@ public class FacilitiesInfoCDAO {
 		
 		map.put("tittle", tittle);
 		map.put("data", list);
-		map.put("button", button);
-		
+		map.put("button", button);	
 		return map;
 	}
 	
@@ -332,7 +333,8 @@ public class FacilitiesInfoCDAO {
 		Map<String, Object> r = new HashMap<String, Object>();
 		
 		Facilities facilities;
-		if(id.equals("")){
+//		System.out.println("~~~~~"+id);
+		if(id==0){
 			facilities = new Facilities();
 		}
 		else{
@@ -344,17 +346,17 @@ public class FacilitiesInfoCDAO {
 		while(keylist.hasNext()){
 			String k = keylist.next();
 			switch(k){
-			case "facilitiesBelongPhysicsMachines" : facilities.setFacilitiesBelongPhysicsMachines((Integer) map.get(k)); break;
-			case "facilitiesOrder" : facilities.setFacilitiesOrder((Integer) map.get(k)); break;
-			case "facilitiesType" : facilities.setFacilitiesType((Integer) map.get(k)); break;
-			case "facilitiesNumberUsePort" : facilities.setFacilitiesNumberUsePort((Integer) map.get(k)); break;
-			case "facilitiesNumberPort" : facilities.setFacilitiesNumberPort((Integer) map.get(k)); break;
+			case "facilitiesBelongPhysicsMachines" : facilities.setFacilitiesBelongPhysicsMachines(Integer.parseInt((String) map.get(k))); break;
+			case "facilitiesOrder" : facilities.setFacilitiesOrder(Integer.parseInt((String) map.get(k))); break;
+			case "facilitiesType" : facilities.setFacilitiesType(Integer.parseInt((String) map.get(k))); break;
+			case "facilitiesNumberUsePort" : facilities.setFacilitiesNumberUsePort(Integer.parseInt((String) map.get(k))); break;
+			case "facilitiesNumberPort" : facilities.setFacilitiesNumberPort(Integer.parseInt((String) map.get(k))); break;
 			case "facilitiesFactory" : facilities.setFacilitiesFactory((String) map.get(k)); break;
 			case "facilitiesIp" : facilities.setFacilitiesIp((String) map.get(k)); break;
 			}
 		}
 		
-		if(id.equals("")){
+		if(id==0){
 			if(this.fDAO.add(facilities)){
 				r.put("isSuccess", true);
 				r.put("id", map.get("facilitiesId"));

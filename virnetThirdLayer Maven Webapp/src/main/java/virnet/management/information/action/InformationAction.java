@@ -70,7 +70,7 @@ public class InformationAction extends ActionSupport implements ServletRequestAw
 		String user = this.request.getParameter("user");
 		String id = this.request.getParameter("id");
 		String name = this.request.getParameter("name");
-		
+		System.out.println(id);
 		this.setEdit(this.infoService.Edit(user, id, name));
 		
 		return SUCCESS;
@@ -94,10 +94,13 @@ public class InformationAction extends ActionSupport implements ServletRequestAw
 				}
 				else{
 					String key = s.substring(5, s.length() - 1);
-					map.put(key, data.get(s)[0]);
+					String w=data.get(s)[0];
+	//				System.out.println("key:"+key);
+					map.put(key, w);
 				}	
 			}
 		}
+		
 		
 		Map<String, Object> returndata = new HashMap<String, Object>();
 		
