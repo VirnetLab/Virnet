@@ -40,9 +40,7 @@ public class BaseDAO {
         Transaction tx = null;
         try {
             session = HibernateSessionFactory.getSessionFactory().openSession();
-            tx = session.beginTransaction(); 
-            session.delete(obj); 
-            tx.commit(); } catch (Exception e) {
+            tx = session.beginTransaction(); session.delete(obj); tx.commit(); } catch (Exception e) {
             if (tx != null) {
                 tx.rollback();
             }
@@ -345,8 +343,9 @@ public class BaseDAO {
 
    
     @SuppressWarnings("rawtypes")
-	public void getListByPage(Class calzz, PageUtil pageUtil) {
+	public void getListByPage(Class calzz, PageUtil pageUtil) {	
         String hql = "SELECT model from " + calzz.getName() + " as model";
+//        System.out.println("Model:"+hql);
         getListByPage(hql, pageUtil);
     }
 
@@ -373,15 +372,18 @@ public class BaseDAO {
             } else {
                 queryString = "Select count(*) " + hql;
             }
+
             // 去掉ORDER BY 的部分
             int j = queryString.toUpperCase().lastIndexOf("ORDER");
             if (j != -1) {
                 queryString = queryString.substring(0, j);
             }
+            System.out.println("Query:"+queryString);
             Query cquery = session.createQuery(queryString);
             cquery.setCacheable(true);
             Number recTotal = ((Number)cquery.iterate().next()).intValue();
             pageUtil.setRecTotal((Integer) recTotal);
+            
         } finally {
             if (session != null) {
                 session.close();

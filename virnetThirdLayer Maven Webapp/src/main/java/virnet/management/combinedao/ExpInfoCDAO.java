@@ -78,7 +78,7 @@ public class ExpInfoCDAO {
 		List<List<Map<String, Object>>> list = new ArrayList<List<Map<String, Object>>>();
 		
 		//实验不能重名
-		List<Exp> elist = this.eDAO.getListByProperty("expName", name);
+		List<Exp> elist = this.eDAO.getListByProperty("expName", name);       
 		
 		if(elist.isEmpty() || elist.size() > 1){
 			//error
@@ -154,20 +154,37 @@ public class ExpInfoCDAO {
 			List<Map<String, Object>> list5 = new ArrayList<Map<String, Object>>();
 			
 			Map<String, Object> map51 = new HashMap<String, Object>();
-			map51.put("name", "进入实验桌面");
+			map51.put("name", "实验类型编码");
 			
 			Map<String, Object> map52 = new HashMap<String, Object>();
-			map52.put("name", "<i class='icon-arrow-right'></i>");
-			map52.put("class", "btn btn-new");
+			map52.put("name", elist.get(0).getExpType());
+			if(isEdit){
+				map52.put("class", "btn btn-link edit");
+				map52.put("onclick", "editable(this);");
+				map52.put("value", "expType");
+			}
 			
 			list5.add(map51);
 			list5.add(map52);
+			
+			List<Map<String, Object>> list6 = new ArrayList<Map<String, Object>>();
+			
+			Map<String, Object> map61 = new HashMap<String, Object>();
+			map61.put("name", "进入实验桌面");
+			
+			Map<String, Object> map62 = new HashMap<String, Object>();
+			map62.put("name", "<i class='icon-arrow-right'></i>");
+			map62.put("class", "btn btn-new");
+			
+			list6.add(map61);
+			list6.add(map62);
 			
 			list.add(list1);
 			list.add(list2);
 			list.add(list3);
 			list.add(list4);
 			list.add(list5);
+			list.add(list6);
 		}
 		
 		return list;
@@ -240,10 +257,22 @@ public class ExpInfoCDAO {
 			list4.add(map41);
 			list4.add(map42);
 			
+			List<Map<String, Object>> list5 = new ArrayList<Map<String, Object>>();
+			
+			Map<String, Object> map51 = new HashMap<String, Object>();
+			map51.put("name", "实验类型编码");
+			
+			Map<String, Object> map52 = new HashMap<String, Object>();
+			map52.put("name", elist.get(0).getExpInstruct());
+			
+			list5.add(map51);
+			list5.add(map52);
+			
 			list.add(list1);
 			list.add(list2);
 			list.add(list3);
 			list.add(list4);
+			list.add(list5);
 		}
 		
 		return list;
@@ -288,12 +317,14 @@ public class ExpInfoCDAO {
 		List<Map<String, Object>> etime = this.vutil.createList("实验标准时间", "", "", "", "btn btn-link edit", "editable(this);", "expStanTime");
 		List<Map<String, Object>> eprofile = this.vutil.createList("实验简介", "", "", "", "btn btn-link edit", "editable(this);", "expProfile");
 		List<Map<String, Object>> einstruct = this.vutil.createList("实验指导", "", "", "", "btn btn-link edit", "editable(this);", "expInstruct");
+		List<Map<String, Object>> etype = this.vutil.createList("标准实验类型", "", "", "", "btn btn-link edit", "editable(this);", "expType");
 		List<Map<String, Object>> eenter = this.vutil.createList("进入实验桌面", "", "", "<i class='icon-arrow-right'></i>", "btn btn-new", "", "");
 		
 		list.add(ename);
 		list.add(etime);
 		list.add(eprofile);
 		list.add(einstruct);
+		list.add(etype);
 		list.add(eenter);
 		
 		Map<String, Object> button = new HashMap<String, Object>();
@@ -328,6 +359,7 @@ public class ExpInfoCDAO {
 			case "expStanTime" : exp.setExpStanTime((String) map.get(k)); break;
 			case "expProfile" : exp.setExpProfile((String) map.get(k)); break;
 			case "expInstruct" : exp.setExpInstruct((String) map.get(k)); break;
+			case "expType" : exp.setExpType((String) map.get(k)); break;
 			}
 		}
 		

@@ -10,7 +10,7 @@ import virnet.management.util.PageUtil;
 public class ExpDAO extends BaseDAO{
 	 public boolean add(Exp obj) {
         return super.add(obj);
-    }
+    }  
 
    
     public void delete(Exp obj) {

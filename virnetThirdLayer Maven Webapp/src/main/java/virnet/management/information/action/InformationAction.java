@@ -55,11 +55,11 @@ public class InformationAction extends ActionSupport implements ServletRequestAw
 		String key = this.request.getParameter("key");
 		String name = this.request.getParameter("name");
 		
-		System.out.println("user : " + user + ", id : " + id + ", key : " + key + ", name : " + name);
+		System.out.println("！！！！！！！user : " + user + ", id : " + id + ", key : " + key + ", name : " + name);
 		
 		//user check
 		
-		//Divide by key : user, class, course, experiment, group
+		//Divide by key : user, class, course, experiment, group，facilities
 		
 		this.setDetail(this.infoService.showDetail(user, id, key, name));
 		

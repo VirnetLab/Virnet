@@ -39,10 +39,10 @@ function logout(){
  */
 function showContent(id, page, select){
 	username = user.getUser();
-	
+
 	$("#content").empty();
 	$("#content").append($("<h class='tittle'><i class='icon-spinner icon-spin icon-4x'></i>正在加载内容</h>"));
-
+	alert(id);
 	//fetch data from server
 	fetchData(id, username, page, select);
 }
@@ -522,6 +522,7 @@ function addContent(id){
  * @param item onclick item
  */
 function sidebar_click(item){
+//	alert("sidebar_click");
 	$(".sidebar-active").attr("class", "sidebar-nonactive");
 	$(item).attr("class", "sidebar-active");
 	

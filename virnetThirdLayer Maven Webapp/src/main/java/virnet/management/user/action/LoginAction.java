@@ -42,6 +42,7 @@ public class LoginAction extends ActionSupport{
 			List<LoginDataUtil> logindata = new ArrayList<LoginDataUtil>();
 			
 			int size = data.getPowerlist().size();
+			System.out.println("!!!!!!????"+size);
 			
 			for(int i = 0; i < size; i++){
 				LoginDataUtil temp = new LoginDataUtil();

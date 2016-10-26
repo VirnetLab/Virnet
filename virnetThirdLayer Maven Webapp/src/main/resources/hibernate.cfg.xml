@@ -43,6 +43,7 @@
         <mapping resource="virnet/management/entity/hbm/Groupmember.hbm.xml" />
         <mapping resource="virnet/management/entity/hbm/StuClass.hbm.xml" />
         <mapping resource="virnet/management/entity/hbm/Courseexp.hbm.xml" />
+        <mapping resource="virnet/management/entity/hbm/Facilities.hbm.xml" />
         
 	</session-factory>  
 </hibernate-configuration>  
