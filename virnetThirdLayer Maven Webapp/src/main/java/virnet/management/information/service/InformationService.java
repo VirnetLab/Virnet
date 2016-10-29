@@ -7,6 +7,7 @@ import virnet.management.combinedao.ClassInfoCDAO;
 import virnet.management.combinedao.CourseInfoCDAO;
 import virnet.management.combinedao.ExpInfoCDAO;
 import virnet.management.combinedao.GroupInfoCDAO;
+import virnet.management.combinedao.PhysicsMachinesInfoCDAO;
 import virnet.management.combinedao.FacilitiesInfoCDAO;
 
 public class InformationService {
@@ -18,6 +19,7 @@ public class InformationService {
 	private CourseInfoCDAO cDAO = new CourseInfoCDAO();
 	private ClassInfoCDAO classDAO = new ClassInfoCDAO();
 	private FacilitiesInfoCDAO fDAO =new FacilitiesInfoCDAO();
+	private PhysicsMachinesInfoCDAO pDAO = new PhysicsMachinesInfoCDAO();
 
 	
 	public Map<String, Object> loadInfo(String user, String id, int page, String select){
@@ -39,6 +41,7 @@ public class InformationService {
 		case "my-exp": query = new MyExp(); break;
 		case "enter-exp": query = new EnterExp(); break;
 		case "facilities-management":query =new FacilitiesManagement();break;
+		case "physicsMachines-management":query =new PhysicsMachinesManagement();break;
 		default: break;
 		}
 		
@@ -57,8 +60,8 @@ public class InformationService {
 		case "course" : map = this.cDAO.showCourseDetail(id, name); break;
 		case "class" : map = this.classDAO.showClassDetail(id, name); break;
 		case "group" : break;
-		case "facilities" :	Integer pri_key=Integer.parseInt(name); 
-							map = this.fDAO.showFacilitiesDetail(id,pri_key);break;
+		case "facilities" :	 map = this.fDAO.showFacilitiesDetail(id,name);break;
+		case "physicsMachines" : map = this.pDAO.showPhysicsMachinesDetail(id, name);break;
 		default : break;
 		}
 	
@@ -73,8 +76,8 @@ public class InformationService {
 		case "course-management" : map = this.cDAO.Edit(name); break;
 		case "class-management" : map = this.classDAO.Edit(name); break;
 		case "time-management" :
-		case "facilities-management" : 	Integer pri_key=Integer.parseInt(name);
-										map = this.fDAO.Edit(pri_key); break;
+		case "facilities-management" : 	map = this.fDAO.Edit(name); break;
+		case "physicsMachines-management" : map = this.pDAO.Edit(name); break;
 		}
 		
 		return map;
@@ -88,7 +91,8 @@ public class InformationService {
 		case "course-management" : map = this.cDAO.Add(); break;
 		case "class-management" :
 		case "facilities-management" :map = this.fDAO.Add();break;
-		case "time-management" : 
+		case "time-management" :
+		case "physicsMachines-management" :map = this.pDAO.Add();break;
 		}
 		
 		return map;
@@ -99,13 +103,8 @@ public class InformationService {
 		switch(id){
 		case "exp-management" : r = this.eDAO.save(name, map); break;
 		case "course-management" : r = this.cDAO.save(name, map);break;
-		case "facilities-management" :	Integer pri_key;
-										if(name.equals(""))                  //new facilities
-											pri_key=0;
-										else
-											pri_key=Integer.parseInt(name);
-										r = this.fDAO.save(pri_key, map);
-										break;
+		case "facilities-management" :	r = this.fDAO.save(name, map);break;
+		case "physicsMachines-management" :	r = this.pDAO.save(name, map);break;
 										
 		default : r = null;
 		}

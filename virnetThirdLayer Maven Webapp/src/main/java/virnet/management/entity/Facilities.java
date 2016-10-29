@@ -24,7 +24,7 @@ public class Facilities implements java.io.Serializable{
 
 	//minor constructor
 	public Facilities(Integer facilitiesId, Integer facilitiesType) {
-		super();
+
 		this.facilitiesId = facilitiesId;
 		this.facilitiesType = facilitiesType;
 	}
@@ -33,7 +33,7 @@ public class Facilities implements java.io.Serializable{
 	//standard constructor
 	public Facilities(Integer facilitiesId, Integer facilitiesBelongPhysicsMachines, Integer facilitiesOrder,
 			Integer facilitiesType, Integer facilitiesNumberUsePort, Integer facilitiesNumberPort) {
-		super();
+
 		this.facilitiesId = facilitiesId;
 		this.facilitiesBelongPhysicsMachines = facilitiesBelongPhysicsMachines;
 		this.facilitiesOrder = facilitiesOrder;

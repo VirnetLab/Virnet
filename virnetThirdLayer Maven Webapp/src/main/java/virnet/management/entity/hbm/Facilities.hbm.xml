@@ -8,7 +8,7 @@
     <class name="virnet.management.entity.Facilities" table="facilities" catalog="virnet">
         <id name="facilitiesId" type="java.lang.Integer">
             <column name="facilities_id" />
-            <generator class="assigned" />
+            <generator class="identity" />
         </id>
         <property name="facilitiesBelongPhysicsMachines" type="java.lang.Integer">
             <column name="facilities_belong_physics_machines" not-null="true" />

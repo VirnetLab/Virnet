@@ -16,27 +16,12 @@ public class FacilitiesInfoCDAO {
 	private FacilitiesDAO fDAO = new FacilitiesDAO();
 	private ViewUtil vutil = new ViewUtil();
 	
-	@SuppressWarnings("unchecked")
-	public int getFacilityBelongPhysicsmachines(int id){
-		List<Facilities> flist = this.fDAO.getListByProperty("facilitiesId", id);   //待定
-		if(flist.isEmpty() || flist.size() > 1){
-			return 0;
-		}
-		else{
-			return flist.get(0).getFacilitiesBelongPhysicsMachines();
-		}
-	}
-	
-//	public Facilities getFacility(Integer id){
-//		return (Facilities) this.fDAO.getUniqueByProperty("FacilitiesId", id);   
-//	}
-
-	
- 	public Map<String, Object> showFacilitiesDetail(String id, Integer pri_key){
+ 	public Map<String, Object> showFacilitiesDetail(String id, String name){
 		Map<String, Object> map = new HashMap<String, Object>();
 		
 		List<List<Map<String, Object>>> list = new ArrayList<List<Map<String, Object>>>();
 		
+		Integer pri_key=Integer.parseInt(name);
 		
 		Map<String, Object> tittle = new HashMap<String, Object>();
 		tittle.put("data", "设备" + pri_key +"<i class='icon-double-angle-right'></i> ");		
@@ -222,64 +207,25 @@ public class FacilitiesInfoCDAO {
  	 *  in the format of map
  	 *                                           //待定
 	 */
-//	@SuppressWarnings("unchecked")
-//	public List<List<Map<String, Object>>> expArrangement(String name){
-//		List<List<Map<String, Object>>> list = new ArrayList<List<Map<String, Object>>>();
-		
-//		//实验不能重名
-//		List<Facility> elist = this.fDAO.getListByProperty("FacilityName", name);
-//		
-//		if(flist.isEmpty() || flist.size() > 1){
-//			//error
-//			list.clear();
-//		}
-//		else{
-//			//get the experiment template
-//			
-//			List<Map<String, Object>> list1 = new ArrayList<Map<String, Object>>();
-//			
-//			Map<String, Object> map11 = new HashMap<String, Object>();
-//			map11.put("name", "实验名称");
-//			
-//			Map<String, Object> map12 = new HashMap<String, Object>();
-//			map12.put("name", elist.get(0).getExpName());
-//			
-//			list1.add(map11);
-//			list1.add(map12);
-//			
-//			List<Map<String, Object>> list2 = new ArrayList<Map<String, Object>>();
-//			
-//			Map<String, Object> map21 = new HashMap<String, Object>();
-//			map21.put("name", "标准实验时间");
-//			
-//			Map<String, Object> map22 = new HashMap<String, Object>();
-//			map22.put("name", elist.get(0).getExpStanTime());
-//			
-//			list2.add(map21);
-//			list2.add(map22);
-//			
-//			list.add(list1);
-//			list.add(list2);
-//		}
-//		
-//		return list;
-//	}
+
 
 	/**
-	 * 生成编辑实验界面的数据
+	 * 生成编辑设备界面的数据
 	 * @param name the name of experiment want to query
 	 * @return the data show on the page
 	 */
-	public Map<String, Object> Edit(Integer id){
-		System.out.println(id);
+	public Map<String, Object> Edit(String name){
+
 		Map<String, Object> map = new HashMap<String, Object>();
 		
 		List<List<Map<String, Object>>> list = new ArrayList<List<Map<String, Object>>>();
 		
-		Map<String, Object> tittle = new HashMap<String, Object>();
-		tittle.put("data", "实验设备"+id+" <i class='icon-double-angle-right'></i> "  );
+		Integer pri_key=Integer.parseInt(name);
 		
-		list = FacilitiesManagement(id, true);
+		Map<String, Object> tittle = new HashMap<String, Object>();
+		tittle.put("data", "实验设备"+pri_key+" <i class='icon-double-angle-right'></i> "  );
+		
+		list = FacilitiesManagement(pri_key, true);
 		
 		Map<String, Object> button = new HashMap<String, Object>();
 		button.put("content", "提交更改");
@@ -329,16 +275,17 @@ public class FacilitiesInfoCDAO {
 		return map;
 	}
 	
-	public Map<String, Object> save(Integer id, Map<String, Object> map){
+	public Map<String, Object> save(String name, Map<String, Object> map){
 		Map<String, Object> r = new HashMap<String, Object>();
 		
 		Facilities facilities;
-//		System.out.println("~~~~~"+id);
-		if(id==0){
+
+		if(name.equals("")){
 			facilities = new Facilities();
 		}
 		else{
-			facilities = (Facilities) this.fDAO.getUniqueByProperty("facilitiesId", id);
+			Integer pri_key=Integer.parseInt(name);
+			facilities = (Facilities) this.fDAO.getUniqueByProperty("facilitiesId", pri_key);
 		}
 		
 		Set<String> key = map.keySet();
@@ -355,8 +302,9 @@ public class FacilitiesInfoCDAO {
 			case "facilitiesIp" : facilities.setFacilitiesIp((String) map.get(k)); break;
 			}
 		}
-		
-		if(id==0){
+
+
+		if(name.equals("")){
 			if(this.fDAO.add(facilities)){
 				r.put("isSuccess", true);
 				r.put("id", map.get("facilitiesId"));

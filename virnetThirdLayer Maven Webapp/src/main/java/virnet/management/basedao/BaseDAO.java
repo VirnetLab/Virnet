@@ -20,9 +20,11 @@ public class BaseDAO {
             tx = session.beginTransaction();
             session.save(obj);
             tx.commit();
+            System.out.println("good");
             return true;
 
         } catch (Exception e) {
+        	System.out.println("error:"+e);
             if (tx != null) {
                 tx.rollback();
             }
