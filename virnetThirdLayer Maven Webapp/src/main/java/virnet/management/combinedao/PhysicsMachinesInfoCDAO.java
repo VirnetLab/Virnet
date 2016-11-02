@@ -22,7 +22,7 @@ public class PhysicsMachinesInfoCDAO {
 		List<List<Map<String, Object>>> list = new ArrayList<List<Map<String, Object>>>();
 		
 		Map<String, Object> tittle = new HashMap<String, Object>();
-		tittle.put("data", "机柜" + name +"<i class='icon-double-angle-right'></i> ");		
+		tittle.put("data", "机柜  " + name +"<i class='icon-double-angle-right'></i> ");		
 		
 		String returnid = id;
 		

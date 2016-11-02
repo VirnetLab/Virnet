@@ -7,7 +7,7 @@ public class Facilities implements java.io.Serializable{
 	 */
 	private static final long serialVersionUID = 4488010857987833125L;
 	private Integer facilitiesId;
-	private Integer facilitiesBelongPhysicsMachines;
+	private String facilitiesBelongPhysicsMachines;
 	private Integer facilitiesOrder;
 	private Integer facilitiesType;
 	private Integer facilitiesNumberUsePort;
@@ -31,7 +31,7 @@ public class Facilities implements java.io.Serializable{
 
 
 	//standard constructor
-	public Facilities(Integer facilitiesId, Integer facilitiesBelongPhysicsMachines, Integer facilitiesOrder,
+	public Facilities(Integer facilitiesId, String facilitiesBelongPhysicsMachines, Integer facilitiesOrder,
 			Integer facilitiesType, Integer facilitiesNumberUsePort, Integer facilitiesNumberPort) {
 
 		this.facilitiesId = facilitiesId;
@@ -43,7 +43,7 @@ public class Facilities implements java.io.Serializable{
 	}
 
 	//full constrcutor
-	public Facilities(Integer facilitiesId, Integer facilitiesBelongPhysicsMachines, Integer facilitiesOrder,
+	public Facilities(Integer facilitiesId, String facilitiesBelongPhysicsMachines, Integer facilitiesOrder,
 			Integer facilitiesType, Integer facilitiesNumberUsePort, Integer facilitiesNumberPort,
 			String facilitiesFactory, String facilitiesIp, String facilitiesPort, String facilitiesSetPort,
 			String facilitiesGetPort) {
@@ -71,12 +71,12 @@ public class Facilities implements java.io.Serializable{
 	}
 
 
-	public Integer getFacilitiesBelongPhysicsMachines() {
+	public String getFacilitiesBelongPhysicsMachines() {
 		return facilitiesBelongPhysicsMachines;
 	}
 
 
-	public void setFacilitiesBelongPhysicsMachines(Integer facilitiesBelongPhysicsMachines) {
+	public void setFacilitiesBelongPhysicsMachines(String facilitiesBelongPhysicsMachines) {
 		this.facilitiesBelongPhysicsMachines = facilitiesBelongPhysicsMachines;
 	}
 

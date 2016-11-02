@@ -21,12 +21,19 @@ public class FacilitiesInfoCDAO {
 		
 		List<List<Map<String, Object>>> list = new ArrayList<List<Map<String, Object>>>();
 		
-		Integer pri_key=Integer.parseInt(name);
+		String sql="select * from facilities where facilities_id="+name;
 		
+		List<Facilities> facilitieslist = new ArrayList<Facilities>();
+		facilitieslist=this.fDAO.getListBySql(sql);
+		String physicsMachinesName = facilitieslist.get(0).getFacilitiesBelongPhysicsMachines();
+		Integer facilitiesOrder = facilitieslist.get(0).getFacilitiesOrder();
+	
 		Map<String, Object> tittle = new HashMap<String, Object>();
-		tittle.put("data", "设备" + pri_key +"<i class='icon-double-angle-right'></i> ");		
+		tittle.put("data", "物理机柜  "+physicsMachinesName+"<i class='icon-double-angle-right'></i>"+" 设备 " + facilitiesOrder);		
 		
 		String returnid = id;
+
+		Integer pri_key=Integer.parseInt(name);
 		
 		switch(id){
 		case "time-management" :
@@ -222,8 +229,15 @@ public class FacilitiesInfoCDAO {
 		
 		Integer pri_key=Integer.parseInt(name);
 		
+		String sql="select * from facilities where facilities_id="+name;
+		
+		List<Facilities> facilitieslist = new ArrayList<Facilities>();
+		facilitieslist=this.fDAO.getListBySql(sql);
+		String physicsMachinesName = facilitieslist.get(0).getFacilitiesBelongPhysicsMachines();
+		Integer facilitiesOrder = facilitieslist.get(0).getFacilitiesOrder();
+	
 		Map<String, Object> tittle = new HashMap<String, Object>();
-		tittle.put("data", "实验设备"+pri_key+" <i class='icon-double-angle-right'></i> "  );
+		tittle.put("data", "物理机柜"+physicsMachinesName+"<i class='icon-double-angle-right'></i>"+"设备" + facilitiesOrder);
 		
 		list = FacilitiesManagement(pri_key, true);
 		
@@ -246,7 +260,7 @@ public class FacilitiesInfoCDAO {
 		List<List<Map<String, Object>>> list = new ArrayList<List<Map<String, Object>>>();
 		
 		Map<String, Object> tittle = new HashMap<String, Object>();
-		tittle.put("data", "实验设备 <i class='icon-double-angle-right'></i> 新增设备");
+		tittle.put("data", "新增设备<i class='icon-double-angle-right'></i>");
 		
 		List<Map<String, Object>> fbelongphysicsmachines = this.vutil.createList("设备所属物理机柜", "", "", "", "btn btn-link edit", "editable(this);", "facilitiesBelongPhysicsMachines");
 		List<Map<String, Object>> forder = this.vutil.createList("设备序号", "", "", "", "btn btn-link edit", "editable(this);", "facilitiesOrder");
@@ -293,7 +307,7 @@ public class FacilitiesInfoCDAO {
 		while(keylist.hasNext()){
 			String k = keylist.next();
 			switch(k){
-			case "facilitiesBelongPhysicsMachines" : facilities.setFacilitiesBelongPhysicsMachines(Integer.parseInt((String) map.get(k))); break;
+			case "facilitiesBelongPhysicsMachines" : facilities.setFacilitiesBelongPhysicsMachines((String) map.get(k)); break;
 			case "facilitiesOrder" : facilities.setFacilitiesOrder(Integer.parseInt((String) map.get(k))); break;
 			case "facilitiesType" : facilities.setFacilitiesType(Integer.parseInt((String) map.get(k))); break;
 			case "facilitiesNumberUsePort" : facilities.setFacilitiesNumberUsePort(Integer.parseInt((String) map.get(k))); break;

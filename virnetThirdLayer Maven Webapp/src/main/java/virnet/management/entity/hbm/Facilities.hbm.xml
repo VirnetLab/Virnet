@@ -10,7 +10,7 @@
             <column name="facilities_id" />
             <generator class="identity" />
         </id>
-        <property name="facilitiesBelongPhysicsMachines" type="java.lang.Integer">
+        <property name="facilitiesBelongPhysicsMachines" type="java.lang.String">
             <column name="facilities_belong_physics_machines" not-null="true" />
         </property>
         <property name="facilitiesOrder" type="java.lang.Integer">

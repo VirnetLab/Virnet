@@ -12,6 +12,7 @@ import virnet.management.combinedao.FacilitiesInfoCDAO;
 
 public class InformationService {
 	
+	private FacilitiesInformationQuery Fquery;
 	private InformationQuery query;
 	private ExpInfoCDAO eDAO = new ExpInfoCDAO();
 	@SuppressWarnings("unused")
@@ -40,7 +41,6 @@ public class InformationService {
 		case "my-group": query = new MyGroup(); break;
 		case "my-exp": query = new MyExp(); break;
 		case "enter-exp": query = new EnterExp(); break;
-		case "facilities-management":query =new FacilitiesManagement();break;
 		case "physicsMachines-management":query =new PhysicsMachinesManagement();break;
 		default: break;
 		}
@@ -48,11 +48,22 @@ public class InformationService {
 		list = query.query(user, page, select);
 		return list;
 	}
+	
+	public Map<String, Object> loadFacilitiesInfo(String user, String id, int page, String select, String physicsMachinesName){
+		Map<String, Object> list = new HashMap<String, Object>();
+		
+		switch(id){
+			case "facilities-management":Fquery =new FacilitiesManagement();break;
+			default : break;
+		}
+		list = Fquery.Facilitiesquery(user, page, select, physicsMachinesName);
+		return list;
+	}
 
 	public Map<String, Object> showDetail(String user, String id, String key, String name){
 		
 		Map<String, Object> map = new HashMap<String, Object>();
-		
+
 		//Divided by key : user, experiment, course, class, group
 		switch(key){
 		case "user" : break;

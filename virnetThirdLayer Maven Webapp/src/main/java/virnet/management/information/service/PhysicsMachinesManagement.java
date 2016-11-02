@@ -36,7 +36,12 @@ public class PhysicsMachinesManagement implements InformationQuery{
 		Map<String, String> head_name = new HashMap<String, String>();
 		head_name.put("name", "物理机柜编号");
 		head_name.put("class", "");
-		head.add(head_name);		
+		head.add(head_name);
+		
+		Map<String, String> head_jump = new HashMap<String, String>();
+		head_jump.put("name", "管理设备");
+		head_jump.put("class", "");
+		head.add(head_jump);
 		
 		list.add(head);
 		
@@ -64,9 +69,15 @@ public class PhysicsMachinesManagement implements InformationQuery{
 			
 			Map<String, String> map_name = new HashMap<String, String>();
 			map_name.put("name", physicsmachineslist.get(i).getPhysicsMachinesName()+ "");
-			map_name.put("class", "");
-			map_name.put("onclick", "showDetail('" + physicsmachineslist.get(i).getPhysicsMachinesName() + "', 'physicsMachines');");//facilities detail
+			map_name.put("class", "btn btn-link");
+			map_name.put("onclick", "showDetail('" + physicsmachineslist.get(i).getPhysicsMachinesName() + "', 'physicsMachines');");//physicsMachines detail
 			physicsmachinesinfo.add(map_name);
+			
+			Map<String, String> map_jump = new HashMap<String, String>();
+			map_jump.put("name", "<i class='icon-arrow-right'></i>");
+			map_jump.put("class", "btn btn-new");
+			map_jump.put("onclick", "fetchFacilitiesData('facilities-management','" + user + "','0','','" + physicsmachineslist.get(i).getPhysicsMachinesName() + "');");
+			physicsmachinesinfo.add(map_jump);
 			
 			System.out.println("index : " + i + ", exp id : " + physicsmachineslist.get(i).getPhysicsMachinesId() + ", exp type : " + physicsmachineslist.get(i).getPhysicsMachinesName());
 			

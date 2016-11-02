@@ -32,6 +32,12 @@
 	        <result name="login">log/login.jsp</result>
 	    </action>
 	    
+	     <action name="loadFacilitiesInfo" class="information" method="loadFacilitiesInfo">
+	        <result name="success" type="json">
+	            <param name="root">results</param>
+	        </result>
+	    </action>
+	    
 	    <action name="showDetail" class="information" method="showDetail">
 	        <result name="success" type="json">
 	            <param name="root">detail</param>
@@ -67,5 +73,6 @@
 	            <param name="root">add</param>
 	        </result>
 	    </action>
+	    
 	</package>
 </struts>

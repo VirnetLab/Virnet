@@ -42,8 +42,11 @@ function showContent(id, page, select){
 
 	$("#content").empty();
 	$("#content").append($("<h class='tittle'><i class='icon-spinner icon-spin icon-4x'></i>正在加载内容</h>"));
-//alert(id);
 	//fetch data from server
+	
+	if(id==null)                     //由于facilities不是通过side-bar点击进入的，此处采取特殊的赋值方式
+		id="facilities-management";
+	
 	fetchData(id, username, page, select);
 }
 
@@ -60,7 +63,10 @@ function showDetail(name, key){
 	$("#content").empty();
 	$("#content").append($("<h class='tittle'><i class='icon-spinner icon-spin icon-4x'></i>正在加载内容</h>"));
 	
-	id = $(".sidebar-active").attr("id");
+	if(key=="facilities")                     //由于facilities不是通过side-bar点击进入的，此处采取特殊的赋值方式
+		id="facilities-management";
+	else
+		id = $(".sidebar-active").attr("id");
 	
 	$.ajax( {    
 	    url:"showDetail",
@@ -213,7 +219,6 @@ function createSelect(data, s, father){
 
 function SelectClick(name){	
 	id = $(".sidebar-active").first().attr("id");
-
 	showContent(id, 0, name);
 
 }
@@ -467,7 +472,8 @@ function submit(){
 	    		showDetail(data["name"], data["key"]);
 	    	}
 	    	else{
-	    		showContent($(".sidebar-active").attr("id"), 0, "");
+	    		id=$(".sidebar-active").attr("id")
+	    		showContent(id, 0, "");
 	    	}
 	    },
 	    error:function(data){
@@ -540,6 +546,7 @@ function sidebar_click(item){
  * @param select 下拉框选择项，如果没有设置为""
  */
 function fetchData(id, user, page, select){
+
 	$.ajax( {    
 	    url:"loadInfo.action",
 	    data:{
@@ -603,6 +610,83 @@ function fetchData(id, user, page, select){
 				user : user,
 				page : page,
 				select : select
+		    });
+	     },    
+	     error : function() {
+	    	 body_content = $("#content");
+	    	 body_content.empty();
+	    	 alert("error");
+	     }
+	}); 
+}
+
+function fetchFacilitiesData(id, user, page, select, physicsMachinesName){
+
+	$.ajax( {    
+	    url:"loadFacilitiesInfo.action",
+	    data:{
+			id : id,
+			user : user,
+			page : page,
+			select : select,
+			physicsMachinesName : physicsMachinesName
+	    },    
+	    type:'post',      
+	    dataType:'json',    
+	    success:function(data) { 
+	    	//display the result
+	    	body_content = $("#content");
+	    	body_content.empty();
+	    	
+	    	if(data == null){
+	    		return;
+	    	}
+	    	
+	    	h = $("<h></h>");
+	    	h.html(physicsMachinesName+"机柜管理");
+	    	h.attr("class", "tittle col-lg-12 col-md-12 col-sm-12 col-xs-12");
+	    	h.appendTo(body_content);
+	    	
+	    	if(data["button_new"] != null){
+		    	button_new = createButton(data["button_new"]);
+		    	button_new.appendTo(body_content);
+	    	}
+	    	
+	    	if(data["select"] != null){
+	    		s_select = createSelect(data["select"], select, body_content);
+	    	}
+	    	
+	    	if(data["data"] != null){
+	    		table = createTable(data["data"]);
+	    		table.appendTo(body_content);
+	    	}
+	    	
+	    	var pageutil = new PageUtil();
+	    	pageutil.setPageNO(data["page"]);
+	    	pageutil.setPageCurrent(page);
+	    	content_page = pageutil.createPageUtil();
+	    	if(content_page != null){
+	    		content_page.appendTo(body_content);
+	    	}
+	    	
+	    	if(data["detail"] != null){
+	    		createDetail(data["detail"]).appendTo(body_content);
+	    	}
+	    	
+	    	if(data["button_switch"] != null){
+		    	button_switch = createButton(data["button_switch"]);
+		    	button_switch.appendTo(body_content);
+	    	}
+	    	
+	    	$(".sidebar-active").attr("class", "sidebar-nonactive");
+    		$("#" + id).attr("class", "sidebar-active");
+	    	
+	    	storeHistory(id, "fetchData", {
+				id : id,
+				user : user,
+				page : page,
+				select : select,
+				physicsMachinesName : physicsMachinesName
 		    });
 	     },    
 	     error : function() {

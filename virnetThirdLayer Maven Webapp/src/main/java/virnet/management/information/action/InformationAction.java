@@ -44,6 +44,19 @@ public class InformationAction extends ActionSupport implements ServletRequestAw
 		return SUCCESS;
 	}
 	
+	public String loadFacilitiesInfo(){
+
+		String user = this.request.getParameter("user");
+		String id = this.request.getParameter("id");
+		String page = this.request.getParameter("page");
+		String select = this.request.getParameter("select");
+		String physicsMachinesName =this.request.getParameter("physicsMachinesName");
+		
+		this.results = this.infoService.loadFacilitiesInfo(user, id, Integer.parseInt(page), select, physicsMachinesName);
+		
+		return SUCCESS;
+	}
+	
 	/*
 	 * 
 	 * @return
@@ -55,7 +68,7 @@ public class InformationAction extends ActionSupport implements ServletRequestAw
 		String key = this.request.getParameter("key");
 		String name = this.request.getParameter("name");
 		
-		//System.out.println("！！！！！！！user : " + user + ", id : " + id + ", key : " + key + ", name : " + name);
+		System.out.println("！！！！！！！user : " + user + ", id : " + id + ", key : " + key + ", name : " + name);
 		
 		//user check
 		
