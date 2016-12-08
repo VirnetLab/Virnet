@@ -389,12 +389,21 @@ function editContent(){
 	    	if(data["button"] != null){
 	    		createButton(data["button"]).appendTo(body);
 	    	}
+	    	if(data["button_newTask"] != null){
+	    		createButton(data["button_newTask"]).appendTo(body);
+	    	}
 	    },
 	    error:function(data){
 	    	alert("error");
 	    }
 	});
 }
+
+//function initializeExp(name,group){
+//	alert(name);
+//	alert('userManagement.jsp?username＝'+ name +'&workgroup＝'+ group);
+//	window.location.href='userManagement.jsp?username＝'+ name +'&workgroup＝'+ group;
+//}
 
 
 /**
@@ -474,6 +483,56 @@ function submit(){
 	    	else{
 	    		id=$(".sidebar-active").attr("id")
 	    		showContent(id, 0, "");
+	    	}
+	    },
+	    error:function(data){
+	    	alert("error");
+	    }
+	});
+}
+
+/**
+ * 新建任务
+ */
+function addtask(){
+	var id = $.cookie("click_id");
+	var name = $.cookie("click_name");
+	var username = user.getUser();
+	
+	$.ajax({
+		url:"addtask.action",
+	    data:{
+			id : id,
+			user : username,
+			name : name
+	    },        
+	    type:'post',      
+	    dataType:'json',    
+	    success:function(data){
+	    	var body = $("#content");
+	    	body.empty();
+	    	
+	    	alert(data["tittle"]["data"]);
+
+	    	if(data["tittle"] != null){
+	    		var h = $("<h></h>");
+	    		h.appendTo(body);
+	    		h.attr("class", "tittle");
+	    		h.html(data["tittle"]["data"]);
+	    	}
+	    	
+	    	if(data["data"] != null){
+	    		createDetail(data["data"]).appendTo(body);
+	    	}
+	    	
+	    	if(data["button"] != null){
+	    		createButton(data["button"]).appendTo(body);
+	    	}
+	    	if(data["button_newTask"] != null){
+	    		createButton(data["button_newTask"]).appendTo(body);
+	    	}
+	    	if(data["issuccess"] == false){
+	    		alert("新增失败");
 	    	}
 	    },
 	    error:function(data){

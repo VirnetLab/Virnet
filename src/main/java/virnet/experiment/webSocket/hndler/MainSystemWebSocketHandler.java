@@ -126,7 +126,7 @@ public class MainSystemWebSocketHandler extends TextWebSocketHandler implements 
         	if(arrangeStatus.equals("true"))
         	{
         		userGroupMap.put(wss, userGroupMapPro.get(wss));  //将该用户的分组信息加入分组map中
-        		queueingLogic(2,jsonString);
+        		queueingLogic(1,jsonString);                      //至少两人
         	  //endPointQueueingLogic(4,3,jsonString)
         	}
     	}

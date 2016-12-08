@@ -132,7 +132,8 @@
 				<button onclick="topo.undo()">撤销</button>
 				
 				<button style="margin-left:20px" onclick="topo.save()">暂存</button>
-				<button onclick="topo.submit()">提交</button>				
+				<button onclick="topo.submit()">提交</button>	
+				<button onclick="topo.saveToDatabase()">初始拓扑</button>			
 			</div>
 	</div>	
 	<script src="./res/js/jtopo-0.4.8-min.js"></script>

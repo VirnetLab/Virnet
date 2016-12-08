@@ -263,15 +263,19 @@ topo.save = function(){
 
 topo.submit = function(){
 
-  //以下是提交连线的结果
-  //发送给后台编辑
-  var position = this.getDevPos();
-  var leftNUM_Str = this.left_nums.join("##");
-  var rightNUM_Str = this.right_nums.join("##");
-  var leftport_Str = this.left_ports.join("##");
-  var rightport_Str = this.right_ports.join("##");
+	  //以下是提交连线的结果
+	  //发送给后台编辑
+	  var position = this.getDevPos();
+	  var leftNUM_Str = this.left_nums.join("##");
+	  var rightNUM_Str = this.right_nums.join("##");
+	  var leftport_Str = this.left_ports.join("##");
+	  var rightport_Str = this.right_ports.join("##");
 
-  console.log(leftNUM_Str + ' '+ rightNUM_Str + ' ' + leftport_Str + ' ' + rightport_Str);
+	  console.log(position + ' '+leftNUM_Str + ' '+ rightNUM_Str + ' ' + leftport_Str + ' ' + rightport_Str);
+	 
+	  topoSend(position , leftNUM_Str , rightNUM_Str , leftport_Str , rightport_Str);
+	}
 
-  topoSend(position , leftNUM_Str , rightNUM_Str , leftport_Str , rightport_Str);
+topo.saveToDatabase = function(){
+		
 }

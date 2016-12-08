@@ -8,8 +8,10 @@ import java.util.Map;
 import java.util.Set;
 
 import virnet.management.dao.ExpDAO;
+import virnet.management.dao.ExpTaskDAO;
 import virnet.management.entity.Exp;
 import virnet.management.util.ViewUtil;
+import virnet.management.combinedao.TaskInfoCDAO;
 
 public class ExpInfoCDAO {
 	
@@ -83,6 +85,8 @@ public class ExpInfoCDAO {
 		if(elist.isEmpty() || elist.size() > 1){
 			//error
 			list.clear();
+			
+			return list;
 		}
 		else{
 			//get the experiment template
@@ -99,9 +103,13 @@ public class ExpInfoCDAO {
 				map12.put("onclick", "editable(this);");
 				map12.put("value", "expName");
 			}
+			Map<String, Object> map13 = new HashMap<String, Object>();
+			map13.put("name", "");
+			
 			
 			list1.add(map11);
 			list1.add(map12);
+			list1.add(map13);
 			
 			List<Map<String, Object>> list2 = new ArrayList<Map<String, Object>>();
 			
@@ -115,9 +123,12 @@ public class ExpInfoCDAO {
 				map22.put("onclick", "editable(this);");
 				map22.put("value", "expStanTime");
 			}
+			Map<String, Object> map23 = new HashMap<String, Object>();
+			map23.put("name", "");
 			
 			list2.add(map21);
 			list2.add(map22);
+			list2.add(map23);
 			
 			List<Map<String, Object>> list3 = new ArrayList<Map<String, Object>>();
 			
@@ -131,9 +142,12 @@ public class ExpInfoCDAO {
 				map32.put("onclick", "editable(this);");
 				map32.put("value", "expProfile");
 			}
+			Map<String, Object> map33 = new HashMap<String, Object>();
+			map33.put("name", "");
 			
 			list3.add(map31);
 			list3.add(map32);
+			list3.add(map33);
 			
 			List<Map<String, Object>> list4 = new ArrayList<Map<String, Object>>();
 			
@@ -147,9 +161,12 @@ public class ExpInfoCDAO {
 				map42.put("onclick", "editable(this);");
 				map42.put("value", "expInstruct");
 			}
+			Map<String, Object> map43 = new HashMap<String, Object>();
+			map43.put("name", "");
 			
 			list4.add(map41);
 			list4.add(map42);
+			list4.add(map43);
 			
 			List<Map<String, Object>> list5 = new ArrayList<Map<String, Object>>();
 			
@@ -163,31 +180,47 @@ public class ExpInfoCDAO {
 				map52.put("onclick", "editable(this);");
 				map52.put("value", "expType");
 			}
+			Map<String, Object> map53 = new HashMap<String, Object>();
+			map53.put("name", "");
 			
 			list5.add(map51);
 			list5.add(map52);
-			
-			List<Map<String, Object>> list6 = new ArrayList<Map<String, Object>>();
-			
-			Map<String, Object> map61 = new HashMap<String, Object>();
-			map61.put("name", "进入实验桌面");
-			
-			Map<String, Object> map62 = new HashMap<String, Object>();
-			map62.put("name", "<i class='icon-arrow-right'></i>");
-			map62.put("class", "btn btn-new");
-			
-			list6.add(map61);
-			list6.add(map62);
+			list5.add(map53);
 			
 			list.add(list1);
 			list.add(list2);
 			list.add(list3);
 			list.add(list4);
 			list.add(list5);
-			list.add(list6);
+			
+			//插入任务的信息
+			TaskInfoCDAO tDAO = new TaskInfoCDAO();
+			List<List<Map<String, Object>>> newlist=tDAO.showTaskDetail(list, name,isEdit);
+			//插入任务信息完毕
+			
+			if(!isEdit){
+				List<Map<String, Object>> list6 = new ArrayList<Map<String, Object>>();
+			
+				Map<String, Object> map61 = new HashMap<String, Object>();
+				map61.put("name", "进入实验桌面");
+			
+				Map<String, Object> map62 = new HashMap<String, Object>();
+				map62.put("name", "<i class='icon-arrow-right'></i>");
+//				map62.put("onclick", "initializeExp('user','1');");
+				map62.put("class", "btn btn-new");
+			
+				Map<String, Object> map63 = new HashMap<String, Object>();
+				map63.put("name", "");
+				
+				list6.add(map61);
+				list6.add(map62);
+				list6.add(map63);
+			
+				newlist.add(list6);
+			}
+			
+			return newlist;
 		}
-		
-		return list;
 	}
 	
 	/**
@@ -293,14 +326,20 @@ public class ExpInfoCDAO {
 		
 		list = expManagement(name, true);
 		
+		Map<Object, Object> button_newTask = new HashMap<Object, Object>();
+		button_newTask.put("content", "新增任务");
+		button_newTask.put("class", "btn button-new");
+		button_newTask.put("click", "addtask()");
+		
 		Map<String, Object> button = new HashMap<String, Object>();
 		button.put("content", "提交更改");
 		button.put("class", "btn button-new");
 		button.put("click", "submit();");
-		
+	    
+		map.put("button_newTask", button_newTask);
+		map.put("button", button);
 		map.put("tittle", tittle);
 		map.put("data", list);
-		map.put("button", button);
 		
 		return map;
 	}
@@ -317,15 +356,13 @@ public class ExpInfoCDAO {
 		List<Map<String, Object>> etime = this.vutil.createList("实验标准时间", "", "", "", "btn btn-link edit", "editable(this);", "expStanTime");
 		List<Map<String, Object>> eprofile = this.vutil.createList("实验简介", "", "", "", "btn btn-link edit", "editable(this);", "expProfile");
 		List<Map<String, Object>> einstruct = this.vutil.createList("实验指导", "", "", "", "btn btn-link edit", "editable(this);", "expInstruct");
-		List<Map<String, Object>> etype = this.vutil.createList("标准实验类型", "", "", "", "btn btn-link edit", "editable(this);", "expType");
-		List<Map<String, Object>> eenter = this.vutil.createList("进入实验桌面", "", "", "<i class='icon-arrow-right'></i>", "btn btn-new", "", "");
+		List<Map<String, Object>> etype = this.vutil.createList("标准实验类型", "", "", "", "btn btn-link edit", "editable(this);", "expType");		
 		
 		list.add(ename);
 		list.add(etime);
 		list.add(eprofile);
 		list.add(einstruct);
 		list.add(etype);
-		list.add(eenter);
 		
 		Map<String, Object> button = new HashMap<String, Object>();
 		button.put("content", "保存实验");
@@ -350,22 +387,31 @@ public class ExpInfoCDAO {
 			exp = (Exp) this.eDAO.getUniqueByProperty("expName", name);
 		}
 		
+		//处理任务信息
+		TaskInfoCDAO tDAO = new TaskInfoCDAO();    
+		
 		Set<String> key = map.keySet();
 		Iterator<String> keylist = key.iterator();
+		boolean success=true;
 		while(keylist.hasNext()){
 			String k = keylist.next();
 			System.out.println(k);
+			boolean flag=true;			
 			switch(k){
 			case "expName" : exp.setExpName((String) map.get(k)); break;
 			case "expStanTime" : exp.setExpStanTime((String) map.get(k)); break;
 			case "expProfile" : exp.setExpProfile((String) map.get(k)); break;
 			case "expInstruct" : exp.setExpInstruct((String) map.get(k)); break;
 			case "expType" : exp.setExpType((String) map.get(k)); break;
+			//若上述均不能匹配，说明为任务信息，应存到任务表
+			default :  flag=tDAO.save(exp.getExpId(), k, map);break;
 			}
+			if(flag==false)
+				success=false;
 		}
 		
 		if(name.equals("")){
-			if(this.eDAO.add(exp)){
+			if(this.eDAO.add(exp)&&success){
 				r.put("isSuccess", true);
 				r.put("name", map.get("expName"));
 				r.put("key", "exp");
@@ -375,7 +421,7 @@ public class ExpInfoCDAO {
 			}
 		}
 		else{
-			if(this.eDAO.update(exp)){
+			if(this.eDAO.update(exp)&&success){
 				r.put("isSuccess", true);
 				r.put("name", map.get("expName"));
 				r.put("key", "exp");
@@ -387,11 +433,40 @@ public class ExpInfoCDAO {
 		
 		return r;
 	}
+	
+	public Map<String, Object> addtask(String name){
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		Exp exp;
 
+		if(name.equals("")){
+			exp = new Exp();
+		}
+		else{
+			exp = (Exp) this.eDAO.getUniqueByProperty("expName", name);
+		}
+
+		TaskInfoCDAO tDAO = new TaskInfoCDAO();
+		boolean flag=tDAO.addtask(exp.getExpId());
+		
+		if(flag==true){
+			
+			map=Edit(name);
+			map.put("isSuccess", true);
+		}
+		else{
+			map=Edit(name);
+			map.put("isSuccess", false);
+		}
+
+		return map;
+	
+	}
 	@SuppressWarnings("unchecked")
 	public List<Exp> getAllExp(){
 		List<Exp> elist = this.eDAO.getList();
 		
 		return elist;
 	}
+	
 }

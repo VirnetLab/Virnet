@@ -27,7 +27,8 @@ public class InformationAction extends ActionSupport implements ServletRequestAw
 	private Map<String, Object> detail = new HashMap<String, Object>();
 	private Map<String, Object> edit = new HashMap<String, Object>();
 	private Map<String, Object> submit = new HashMap<String, Object>();
-		private Map<String, Object> add = new HashMap<String, Object>();
+	private Map<String, Object> addTask = new HashMap<String, Object>();
+	private Map<String, Object> add = new HashMap<String, Object>();
 	
 	public String loadInfo(){
 		//question remaining : user power is required or not when query object details?
@@ -129,10 +130,21 @@ public class InformationAction extends ActionSupport implements ServletRequestAw
 		return SUCCESS;
 	}
 	
+	public String addtask(){
+		String user = this.request.getParameter("user");
+		String id = this.request.getParameter("id");
+		String name = this.request.getParameter("name");
+		
+		this.setAddTask(this.infoService.addtask(user, id,name));
+		
+		return SUCCESS;
+	}
+	
+
 	public String add(){
 		String user = this.request.getParameter("user");
 		String id = this.request.getParameter("id");
-		
+	
 		this.setAdd(this.infoService.add(user, id));
 		
 		return SUCCESS;
@@ -177,9 +189,16 @@ public class InformationAction extends ActionSupport implements ServletRequestAw
 	public void setSubmit(Map<String, Object> s){
 		this.submit = s;
 	}
-	
 	public Map<String, Object> getSubmit(){
 		return this.submit;
+	}
+	
+	public Map<String, Object> getAddTask(){
+		return this.addTask;
+	}
+	
+	public void setAddTask(Map<String, Object> s){
+		this.addTask = s;
 	}
 	
 	public void setAdd(Map<String, Object> s){

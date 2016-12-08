@@ -79,5 +79,11 @@
 	        </result>
 	    </action>
 	    
+	     <action name="addtask" class="information" method="addtask">
+	        <result name="success" type="json">
+	            <param name="root">addTask</param>
+	        </result>
+	    </action>
+	    
 	</package>
 </struts>

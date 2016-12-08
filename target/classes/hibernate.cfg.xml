@@ -44,7 +44,23 @@
         <mapping resource="virnet/management/entity/hbm/StuClass.hbm.xml" />
         <mapping resource="virnet/management/entity/hbm/Courseexp.hbm.xml" />
         <mapping resource="virnet/management/entity/hbm/Facilities.hbm.xml" />
-        <mapping resource="virnet/management/entity/hbm/PhysicsMachines.hbm.xml" />  
-        
-	</session-factory>  
+        <mapping resource="virnet/management/entity/hbm/PhysicsMachines.hbm.xml" />
+        <mapping resource="virnet/experiment/entity/hbm/CabinetTemplet.hbm.xml" /> 
+        <mapping resource="virnet/experiment/entity/hbm/CabinetTempletDevice.hbm.xml" />   
+        <mapping resource="virnet/management/entity/hbm/ExpTask.hbm.xml" />
+        <mapping resource="virnet/experiment/entity/hbm/ExpTopo.hbm.xml" />         
+        <mapping resource="virnet/experiment/entity/hbm/ExpConnect.hbm.xml" />  
+        <mapping resource="virnet/experiment/entity/hbm/ExpConfig.hbm.xml" />
+        <mapping resource="virnet/experiment/entity/hbm/ExpDeviceConfig.hbm.xml" /> 
+        <mapping resource="virnet/experiment/entity/hbm/ExpVerify.hbm.xml" />                      
+        <mapping resource="virnet/experiment/entity/hbm/ExpVerifyPing.hbm.xml" /> 
+        <mapping resource="virnet/experiment/entity/hbm/ResultTask.hbm.xml" />   
+        <mapping resource="virnet/experiment/entity/hbm/ResultTopo.hbm.xml" />  
+        <mapping resource="virnet/experiment/entity/hbm/ResultConnect.hbm.xml" />
+        <mapping resource="virnet/experiment/entity/hbm/ResultConfig.hbm.xml" /> 
+        <mapping resource="virnet/experiment/entity/hbm/ResultDeviceConfig.hbm.xml" /> 
+        <mapping resource="virnet/experiment/entity/hbm/ResultVerify.hbm.xml" />
+        <mapping resource="virnet/experiment/entity/hbm/ResultVerifyPing.hbm.xml" />   
+            
+</session-factory>  
 </hibernate-configuration>  

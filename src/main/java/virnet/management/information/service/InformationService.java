@@ -122,4 +122,10 @@ public class InformationService {
 		
 	return r;
 	}
+	
+	public Map<String, Object> addtask(String user, String id, String name){
+		Map<String, Object>  map = new HashMap<String, Object>();
+		map = this.eDAO.addtask(name);
+		return map;
+	}
 }
