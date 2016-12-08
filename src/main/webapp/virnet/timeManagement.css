@@ -1,0 +1,15 @@
+.course-table{
+	margin-top:30px;
+}
+
+.course-table td:hover{
+	
+}
+
+.courseTable-th{
+	text-align:center;
+}
+
+.courseTable-selected{
+	background-color: #CCFFFF;
+}
