@@ -1,26 +1,28 @@
-package virnet.experiment.entity;
+package virnet.management.entity;
 
 public class CabinetTempletDevice implements java.io.Serializable {
 
 
-	private static final long serialVersionUID = 920613482083546663L;
+	private static final long serialVersionUID = -2274029599019047934L;
 	/**
 	 * 实验机柜模板设备表
 	 */	
 	private Integer cabinetTempletDeviceId;
 	private Integer cabinetTempletId;
-	private String  deviceName;
 	private Integer deviceOrder;
 	private Integer deviceType;
 	private Integer lanPortNum;
 	private Integer wanPortNum;
 	
-	public CabinetTempletDevice(Integer cabinetTempletDeviceId, Integer cabinetTempletId, String deviceName,
+	/** default constructor */
+	public CabinetTempletDevice() {
+	}
+	
+	public CabinetTempletDevice(Integer cabinetTempletDeviceId, Integer cabinetTempletId,
 			Integer deviceOrder, Integer deviceType, Integer lanPortNum, Integer wanPortNum) {
 		super();
 		this.cabinetTempletDeviceId = cabinetTempletDeviceId;
 		this.cabinetTempletId = cabinetTempletId;
-		this.deviceName = deviceName;
 		this.deviceOrder = deviceOrder;
 		this.deviceType = deviceType;
 		this.lanPortNum = lanPortNum;
@@ -44,12 +46,6 @@ public class CabinetTempletDevice implements java.io.Serializable {
 	}
 	public void setCabinetTempletId(Integer cabinetTempletId) {
 		this.cabinetTempletId = cabinetTempletId;
-	}
-	public String getDeviceName() {
-		return deviceName;
-	}
-	public void setDeviceName(String deviceName) {
-		this.deviceName = deviceName;
 	}
 	public Integer getDeviceOrder() {
 		return deviceOrder;

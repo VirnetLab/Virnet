@@ -7,11 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import virnet.management.dao.CabinetTempletDAO;
 import virnet.management.dao.ExpDAO;
-import virnet.management.dao.ExpTaskDAO;
 import virnet.management.entity.Exp;
+import virnet.management.entity.CabinetTemplet;
 import virnet.management.util.ViewUtil;
 import virnet.management.combinedao.TaskInfoCDAO;
+import virnet.management.combinedao.CabinetTempletDeviceInfoCDAO;
 
 public class ExpInfoCDAO {
 	
@@ -49,7 +51,7 @@ public class ExpInfoCDAO {
 		case "class-management" :
 		case "course-management" :
 		case "exp-management" : Map<String, Object> button = new HashMap<String, Object>();
-								button.put("content", "修改实验内容");
+								button.put("content", "修改实验内容及任务");
 								button.put("class", "btn button-new");
 								button.put("click", "editContent();");
 								list = expManagement(name, false); 
@@ -193,9 +195,19 @@ public class ExpInfoCDAO {
 			list.add(list4);
 			list.add(list5);
 			
+			//插入设备信息
+			CabinetTempletDeviceInfoCDAO ctdDAO =new CabinetTempletDeviceInfoCDAO();
+			List<List<Map<String, Object>>> devicelist=ctdDAO.showTaskDetail(list, name,isEdit);
+			//插入设备信息完毕
+			
+			//插入实验机柜模板信息
+			CabinetTempletInfoCDAO ctDAO =new CabinetTempletInfoCDAO();
+			List<List<Map<String, Object>>> cabinetTempletlist= ctDAO.showTaskDetail(devicelist, name,isEdit);
+			//插入实验机柜模板信息
+			
 			//插入任务的信息
 			TaskInfoCDAO tDAO = new TaskInfoCDAO();
-			List<List<Map<String, Object>>> newlist=tDAO.showTaskDetail(list, name,isEdit);
+			List<List<Map<String, Object>>> tasklist=tDAO.showTaskDetail(cabinetTempletlist, name,isEdit);
 			//插入任务信息完毕
 			
 			if(!isEdit){
@@ -206,7 +218,7 @@ public class ExpInfoCDAO {
 			
 				Map<String, Object> map62 = new HashMap<String, Object>();
 				map62.put("name", "<i class='icon-arrow-right'></i>");
-//				map62.put("onclick", "initializeExp('user','1');");
+				map62.put("onclick", "initializeExp();");
 				map62.put("class", "btn btn-new");
 			
 				Map<String, Object> map63 = new HashMap<String, Object>();
@@ -216,10 +228,10 @@ public class ExpInfoCDAO {
 				list6.add(map62);
 				list6.add(map63);
 			
-				newlist.add(list6);
+				tasklist.add(list6);
 			}
 			
-			return newlist;
+			return tasklist;
 		}
 	}
 	
@@ -356,13 +368,23 @@ public class ExpInfoCDAO {
 		List<Map<String, Object>> etime = this.vutil.createList("实验标准时间", "", "", "", "btn btn-link edit", "editable(this);", "expStanTime");
 		List<Map<String, Object>> eprofile = this.vutil.createList("实验简介", "", "", "", "btn btn-link edit", "editable(this);", "expProfile");
 		List<Map<String, Object>> einstruct = this.vutil.createList("实验指导", "", "", "", "btn btn-link edit", "editable(this);", "expInstruct");
-		List<Map<String, Object>> etype = this.vutil.createList("标准实验类型", "", "", "", "btn btn-link edit", "editable(this);", "expType");		
+		List<Map<String, Object>> etype = this.vutil.createList("标准实验类型", "", "", "", "btn btn-link edit", "editable(this);", "expType");
+		List<Map<String, Object>> Rt = this.vutil.createList("路由器数量", "", "", "", "btn btn-link edit", "editable(this);", "Rt");
+		List<Map<String, Object>> Sw2 = this.vutil.createList("二层交换机数量", "", "", "", "btn btn-link edit", "editable(this);", "Sw2");
+		List<Map<String, Object>> Sw3 = this.vutil.createList("三层交换机数量", "", "", "", "btn btn-link edit", "editable(this);", "Sw3");
+		List<Map<String, Object>> Limit = this.vutil.createList("约束条件", "", "", "", "btn btn-link edit", "editable(this);", "Limit");
+		List<Map<String, Object>> Remark = this.vutil.createList("备注", "", "", "", "btn btn-link edit", "editable(this);", "Remark");
 		
 		list.add(ename);
 		list.add(etime);
 		list.add(eprofile);
 		list.add(einstruct);
 		list.add(etype);
+		list.add(Rt);
+		list.add(Sw2);
+		list.add(Sw3);
+		list.add(Limit);
+		list.add(Remark);
 		
 		Map<String, Object> button = new HashMap<String, Object>();
 		button.put("content", "保存实验");
@@ -379,13 +401,22 @@ public class ExpInfoCDAO {
 	public Map<String, Object> save(String name, Map<String, Object> map){
 		Map<String, Object> r = new HashMap<String, Object>();
 		
+		//处理实验机柜信息
+		CabinetTempletDAO ctDAO =new CabinetTempletDAO();
 		Exp exp;
+		CabinetTemplet cabinetTemplet;
 		if(name.equals("")){
-			exp = new Exp();
+			exp = new Exp();                        //新建一个实验模板
+			cabinetTemplet = new CabinetTemplet();	//新建一个实验机柜模板
 		}
 		else{
 			exp = (Exp) this.eDAO.getUniqueByProperty("expName", name);
+			cabinetTemplet = (CabinetTemplet) ctDAO.getUniqueByProperty("cabinetTempletName", name);
 		}
+		
+		//处理设备信息
+		CabinetTempletDeviceInfoCDAO ctdDAO = new CabinetTempletDeviceInfoCDAO();
+		Map<String, Object> deviceMap = new HashMap<String, Object>();
 		
 		//处理任务信息
 		TaskInfoCDAO tDAO = new TaskInfoCDAO();    
@@ -398,11 +429,21 @@ public class ExpInfoCDAO {
 			System.out.println(k);
 			boolean flag=true;			
 			switch(k){
-			case "expName" : exp.setExpName((String) map.get(k)); break;
+			case "expName" : String Name=(String) map.get(k);
+							 exp.setExpName(Name); 
+							 cabinetTemplet.setCabinetTempletName(Name);
+							 break;
 			case "expStanTime" : exp.setExpStanTime((String) map.get(k)); break;
 			case "expProfile" : exp.setExpProfile((String) map.get(k)); break;
 			case "expInstruct" : exp.setExpInstruct((String) map.get(k)); break;
 			case "expType" : exp.setExpType((String) map.get(k)); break;
+			//将每一个设备的数量记录下来，在下面在统计更改实验机柜设备表
+			case "Rt" :  deviceMap.put("Rt",Integer.parseInt((String) map.get(k)));break;
+			case "Sw2" : deviceMap.put("Sw2",Integer.parseInt((String)map.get(k)));break;
+			case "Sw3" : deviceMap.put("Sw3",Integer.parseInt((String)map.get(k)));break;
+			//
+			case "Limit" :cabinetTemplet.setCabinetTempletLimit((String) map.get(k)); break;
+			case "Remark" :cabinetTemplet.setCabinetTempletRemark((String) map.get(k)); break;
 			//若上述均不能匹配，说明为任务信息，应存到任务表
 			default :  flag=tDAO.save(exp.getExpId(), k, map);break;
 			}
@@ -411,20 +452,40 @@ public class ExpInfoCDAO {
 		}
 		
 		if(name.equals("")){
-			if(this.eDAO.add(exp)&&success){
-				r.put("isSuccess", true);
-				r.put("name", map.get("expName"));
-				r.put("key", "exp");
+			//实验模板表和实验机柜模板表都新建完成，将机柜模板Id回填到实验模板表，并更改实验机柜设备表
+			if(this.eDAO.add(exp)&&ctDAO.add(cabinetTemplet)&&success){   
+
+				Integer cabinetTempletId = cabinetTemplet.getCabinetTempletId();
+				exp.setExpCabinetTempletId(cabinetTempletId);    //回填
+				
+				boolean deviceUpdate = ctdDAO.save(deviceMap,cabinetTempletId);
+				
+				if(this.eDAO.update(exp)&&deviceUpdate){
+					r.put("isSuccess", true);
+					r.put("name", map.get("expName"));
+					r.put("key", "exp");
+				}
+				else{
+					r.put("isSuccess", false);
+				}		
 			}
 			else{
 				r.put("isSuccess", false);
 			}
 		}
 		else{
-			if(this.eDAO.update(exp)&&success){
-				r.put("isSuccess", true);
-				r.put("name", map.get("expName"));
-				r.put("key", "exp");
+			if(this.eDAO.update(exp)&&ctDAO.update(cabinetTemplet)&&success){
+				
+				boolean deviceUpdate = ctdDAO.save(deviceMap,cabinetTemplet.getCabinetTempletId());
+				
+				if(deviceUpdate){
+					r.put("isSuccess", true);
+					r.put("name", map.get("expName"));
+					r.put("key", "exp");
+				}
+				else
+					r.put("isSuccess", false);
+				
 			}
 			else{
 				r.put("isSuccess", false);

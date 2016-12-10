@@ -45,8 +45,8 @@
         <mapping resource="virnet/management/entity/hbm/Courseexp.hbm.xml" />
         <mapping resource="virnet/management/entity/hbm/Facilities.hbm.xml" />
         <mapping resource="virnet/management/entity/hbm/PhysicsMachines.hbm.xml" />
-        <mapping resource="virnet/experiment/entity/hbm/CabinetTemplet.hbm.xml" /> 
-        <mapping resource="virnet/experiment/entity/hbm/CabinetTempletDevice.hbm.xml" />   
+        <mapping resource="virnet/management/entity/hbm/CabinetTemplet.hbm.xml" /> 
+        <mapping resource="virnet/management/entity/hbm/CabinetTempletDevice.hbm.xml" />   
         <mapping resource="virnet/management/entity/hbm/ExpTask.hbm.xml" />
         <mapping resource="virnet/experiment/entity/hbm/ExpTopo.hbm.xml" />         
         <mapping resource="virnet/experiment/entity/hbm/ExpConnect.hbm.xml" />  

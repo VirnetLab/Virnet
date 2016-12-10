@@ -13,10 +13,12 @@
 <body>
 	<div>
 		<%
-		String userName = request.getParameter("username");  
-		String workGroup = request.getParameter("workGroup"); 
-		session.setAttribute("username",userName);
-		session.setAttribute("workgroup",workGroup);
+	//	String userName = request.getParameter("username");  
+	//	String userName = request.getParameter("workgroup");
+	//	String workGroup = "1";
+	//	out.print(userName);
+		//session.setAttribute("username",userName);
+		
 		session.setAttribute("pageType","arrange");
 		%>
 	<button id="sendBtn" onclick="showAndHideThings()" >点击排队</button> 

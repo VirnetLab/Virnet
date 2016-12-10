@@ -1,15 +1,19 @@
-package virnet.experiment.entity;
+package virnet.management.entity;
 
 public class CabinetTemplet implements java.io.Serializable {
 
+	private static final long serialVersionUID = -5688895909371195319L;
 	/**
 	 * 实验机柜模板表
 	 */
-	private static final long serialVersionUID = 5813221532139099171L;
 	private Integer cabinetTempletId;
 	private String cabinetTempletName;
 	private String cabinetTempletLimit;
 	private String cabinetTempletRemark;
+	
+	/** default constructor */
+	public CabinetTemplet() {
+	}
 	
 	public CabinetTemplet(Integer cabinetTempletId, String cabinetTempletName, String cabinetTempletLimit,
 			String cabinetTempletRemark) {

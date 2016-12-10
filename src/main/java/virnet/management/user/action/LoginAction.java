@@ -42,7 +42,6 @@ public class LoginAction extends ActionSupport{
 			List<LoginDataUtil> logindata = new ArrayList<LoginDataUtil>();
 			
 			int size = data.getPowerlist().size();
-			System.out.println("!!!!!!????"+size);
 			
 			for(int i = 0; i < size; i++){
 				LoginDataUtil temp = new LoginDataUtil();
@@ -61,6 +60,8 @@ public class LoginAction extends ActionSupport{
 			
 			this.session.put("powerlist", logindata);
 			this.session.put("username", "username");
+			this.session.put("workgroup","0");
+			System.out.println("workgroup="+session.get("workgroup"));
 			
 			return SUCCESS;
 		}
