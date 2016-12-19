@@ -18,6 +18,10 @@ public class ResultVerifyPing implements java.io.Serializable {
 	private Integer destPCPortOrder;
 	private Integer successFlag;
 	
+	public ResultVerifyPing() {
+
+	}
+
 	public ResultVerifyPing(Integer resultVerifyPingId, Integer resultVerifyId, Integer sourcePCOrder,
 			String sourcePCIp, Integer sourcePCDeviceOrder, Integer sourcePCPortOrder, Integer destPCOrder,
 			String destPCIp, Integer destPCDeviceOrder, Integer destPCPortOrder, Integer successFlag) {

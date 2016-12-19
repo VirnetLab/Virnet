@@ -276,6 +276,15 @@ topo.submit = function(){
 	  topoSend(position , leftNUM_Str , rightNUM_Str , leftport_Str , rightport_Str);
 	}
 
-topo.saveToDatabase = function(){
-		
+topo.saveToDatabase = function(expTaskOrder,expId){        //TasexpTaskOrderkId为0时是初始拓扑
+	
+	var position = this.getDevPos();
+	var leftNUM_Str = this.left_nums.join("##");
+	var rightNUM_Str = this.right_nums.join("##");
+	var leftport_Str = this.left_ports.join("##");
+	var rightport_Str = this.right_ports.join("##");
+
+	console.log(position + ' '+leftNUM_Str + ' '+ rightNUM_Str + ' ' + leftport_Str + ' ' + rightport_Str);
+	
+	topoSaveToDatabase(position , leftNUM_Str , rightNUM_Str , leftport_Str , rightport_Str , expId ,expTaskOrder);
 }

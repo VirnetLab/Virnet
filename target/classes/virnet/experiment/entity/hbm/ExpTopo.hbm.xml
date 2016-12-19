@@ -18,7 +18,7 @@
         <property name="expTaskOrder" type="java.lang.Integer">
             <column name="EXPTOPO_ExpTask_Order" length="65535"  not-null="true"/>
         </property>
-        <property name="expTopoConnetNum" type="java.lang.Integer">
+        <property name="expTopoConnectNum" type="java.lang.Integer">
             <column name="EXPTOPO_Connect_Num" length="65535" />
         </property>
         <property name="expTopoRemark" type="java.lang.String">

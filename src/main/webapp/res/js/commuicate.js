@@ -22,13 +22,14 @@ var messageJson = {
 					"inputEquipmentNumber":"default",   //当前操作的设备号
 					"equipmentNumStr":"default",  	//设备序号串
 					"equipmentPortStr":"default",	//设备序号串对应下的各设备可用端口号串
-					"position":"default",
+					"position":"default",		//设备的位置 设备的X，Y坐标以空格相隔，设备间以逗号相隔
 					"leftNUM_Str":"default",   	//左端设备序号串，“##”隔开
 					"rightNUM_Str":"default",  	//右端设备序号串，“##”隔开
 					"leftport_Str":"default", 	//左端设备端口序号串，“##”隔开
 					"rightport_Str":"default",	//右端设备端口序号串，“##”隔开
-					"success":"default"
-						
+					"success":"default",
+					"expId":"default",          //实验Id     
+					"expTaskOrder":"default"
 				  };
 //判断当前浏览器是否支持WebSocket
   if ('WebSocket' in window) {
@@ -50,9 +51,7 @@ websocket.onerror = function(event){
 
 //连接成功建立的回调方法
 websocket.onopen = function(event){
-    messageJson.type = "requestEquipment";
-    var mess = JSON.stringify(messageJson);
-	websocket.send(mess); 
+    
 }
 
 //接收到消息的回调方法
@@ -116,8 +115,6 @@ websocket.onmessage = function(event){
 	  {	
 			  topo.clone(object);
 	  }
-	  
-	  
 	  if(object.type == "release")
 	  {
 		  if(object.success == true)
@@ -127,6 +124,14 @@ websocket.onmessage = function(event){
 			    document.getElementById("release").style.background = 'grey';
 			  }
 		  else{alert("释放失败");}
+	  }
+	  if(object.type == "topoSaveToDatabase")
+	  {	
+		  if(object.success == true)
+		  {
+			  alert("保存成功");
+		  }
+		  else{alert("保存失败");}
 	  }
 }
 
@@ -145,6 +150,12 @@ window.onbeforeunload = function(){
 //关闭连接
 function closeWebSocket(){
 	websocket.close();
+}
+function start(expId){
+	messageJson.type = "requestEquipment";
+	messageJson.expId = expId;
+	var mess = JSON.stringify(messageJson);
+	websocket.send(mess);
 }
 
 //发送消息
@@ -362,6 +373,20 @@ function topoSend(position , leftNUM_Str , rightNUM_Str , leftport_Str , rightpo
     messageJson.leftport_Str = leftport_Str;
     messageJson.rightport_Str = rightport_Str;
     messageJson.type = "topoedit";
+    var mess = JSON.stringify(messageJson);
+    websocket.send(mess);
+}
+
+function topoSaveToDatabase(position , leftNUM_Str , rightNUM_Str , leftport_Str , rightport_Str , expId , expTaskOrder){
+	messageJson.position = position;
+    messageJson.leftNUM_Str = leftNUM_Str;
+    messageJson.rightNUM_Str = rightNUM_Str;
+    messageJson.leftport_Str = leftport_Str;
+    messageJson.rightport_Str = rightport_Str;
+    messageJson.expId = expId;
+    messageJson.position = position;
+    messageJson.expTaskOrder = expTaskOrder;
+    messageJson.type = "topoSaveToDatabase";
     var mess = JSON.stringify(messageJson);
     websocket.send(mess);
 }

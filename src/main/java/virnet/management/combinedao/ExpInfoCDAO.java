@@ -82,7 +82,7 @@ public class ExpInfoCDAO {
 		List<List<Map<String, Object>>> list = new ArrayList<List<Map<String, Object>>>();
 		
 		//实验不能重名
-		List<Exp> elist = this.eDAO.getListByProperty("expName", name);       
+		List<Exp> elist = this.eDAO.getListByProperty("expName", name);  
 		
 		if(elist.isEmpty() || elist.size() > 1){
 			//error
@@ -370,8 +370,8 @@ public class ExpInfoCDAO {
 		List<Map<String, Object>> einstruct = this.vutil.createList("实验指导", "", "", "", "btn btn-link edit", "editable(this);", "expInstruct");
 		List<Map<String, Object>> etype = this.vutil.createList("标准实验类型", "", "", "", "btn btn-link edit", "editable(this);", "expType");
 		List<Map<String, Object>> Rt = this.vutil.createList("路由器数量", "", "", "", "btn btn-link edit", "editable(this);", "Rt");
-		List<Map<String, Object>> Sw2 = this.vutil.createList("二层交换机数量", "", "", "", "btn btn-link edit", "editable(this);", "Sw2");
-		List<Map<String, Object>> Sw3 = this.vutil.createList("三层交换机数量", "", "", "", "btn btn-link edit", "editable(this);", "Sw3");
+		List<Map<String, Object>> Sw2 = this.vutil.createList("三层交换机数量", "", "", "", "btn btn-link edit", "editable(this);", "Sw3");
+		List<Map<String, Object>> Sw3 = this.vutil.createList("二层交换机数量", "", "", "", "btn btn-link edit", "editable(this);", "Sw2");
 		List<Map<String, Object>> Limit = this.vutil.createList("约束条件", "", "", "", "btn btn-link edit", "editable(this);", "Limit");
 		List<Map<String, Object>> Remark = this.vutil.createList("备注", "", "", "", "btn btn-link edit", "editable(this);", "Remark");
 		
@@ -439,8 +439,8 @@ public class ExpInfoCDAO {
 			case "expType" : exp.setExpType((String) map.get(k)); break;
 			//将每一个设备的数量记录下来，在下面在统计更改实验机柜设备表
 			case "Rt" :  deviceMap.put("Rt",Integer.parseInt((String) map.get(k)));break;
-			case "Sw2" : deviceMap.put("Sw2",Integer.parseInt((String)map.get(k)));break;
 			case "Sw3" : deviceMap.put("Sw3",Integer.parseInt((String)map.get(k)));break;
+			case "Sw2" : deviceMap.put("Sw2",Integer.parseInt((String)map.get(k)));break;
 			//
 			case "Limit" :cabinetTemplet.setCabinetTempletLimit((String) map.get(k)); break;
 			case "Remark" :cabinetTemplet.setCabinetTempletRemark((String) map.get(k)); break;

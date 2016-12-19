@@ -62,6 +62,7 @@ public class LoginAction extends ActionSupport{
 			this.session.put("username", "username");
 			this.session.put("workgroup","0");
 			System.out.println("workgroup="+session.get("workgroup"));
+//			this.session.put("expId",null);
 			
 			return SUCCESS;
 		}
@@ -97,4 +98,10 @@ public class LoginAction extends ActionSupport{
 	 public void setSession(){
 		 this.session = ActionContext.getContext().getSession();
 	 }
+//	 public void setExpId(Integer expId){
+//		 this.session.put("expId", expId);
+//	 }
+//	 public Object getExpId(){
+//		 return this.session.get("expId");
+//	 }
 }

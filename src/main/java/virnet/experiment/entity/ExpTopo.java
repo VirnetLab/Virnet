@@ -9,16 +9,20 @@ public class ExpTopo implements java.io.Serializable {
 	private Integer expTopoId;
 	private Integer expId;
 	private Integer expTaskOrder;
-	private Integer expTopoConnetNum;
+	private Integer expTopoConnectNum;
 	private String  expTopoRemark;
 	
-	public ExpTopo(Integer expTopoId, Integer expId, Integer expTaskOrder, Integer expTopoConnetNum,
+	public ExpTopo(){
+		
+	}
+	
+	public ExpTopo(Integer expTopoId, Integer expId, Integer expTaskOrder, Integer expTopoConnectNum,
 			String expTopoRemark) {
 		super();
 		this.expTopoId = expTopoId;
 		this.expId = expId;
 		this.expTaskOrder = expTaskOrder;
-		this.expTopoConnetNum = expTopoConnetNum;
+		this.expTopoConnectNum = expTopoConnectNum;
 		this.expTopoRemark = expTopoRemark;
 	}
 
@@ -53,12 +57,12 @@ public class ExpTopo implements java.io.Serializable {
 		this.expTaskOrder = expTaskOrder;
 	}
 
-	public Integer getExpTopoConnetNum() {
-		return expTopoConnetNum;
+	public Integer getExpTopoConnectNum() {
+		return expTopoConnectNum;
 	}
 
-	public void setExpTopoConnetNum(Integer expTopoConnetNum) {
-		this.expTopoConnetNum = expTopoConnetNum;
+	public void setExpTopoConnectNum(Integer expTopoConnectNum) {
+		this.expTopoConnectNum = expTopoConnectNum;
 	}
 
 	public String getexpTopoRemark() {

@@ -47,36 +47,8 @@ public class CabinetTempletDeviceInfoCDAO {
 		Rtlist.add(map12);
 		Rtlist.add(map13);
 		
-		
-		
-		//获得该实验所需的二层交换机数量,以list.size记录
-		String[] para2={"cabinetTempletId",""+cabinetTempletId,"deviceType","2"};
-		List<CabinetTempletDevice> result2 =  this.ctdDAO.getListByNProperty(para2);
-			
-		List<Map<String, Object>> sw2list = new ArrayList<Map<String, Object>>();
-				
-		Map<String, Object> map21 = new HashMap<String, Object>();
-		map21.put("name", "二层交换机数量");
-				
-		Map<String, Object> map22 = new HashMap<String, Object>();
-		map22.put("name", result2.size());
-		if(isEdit){
-			map22.put("class", "btn btn-link a edit");
-			map22.put("onclick", "editable(this);");
-			map22.put("value", "Sw2");
-		}
-		
-					
-		Map<String, Object> map23 = new HashMap<String, Object>();
-		map23.put("name", "");
-
-		sw2list.add(map21);
-		sw2list.add(map22);
-		sw2list.add(map23);
-		
-		
 		//获得该实验所需的三层交换机数量,以list.size记录
-		String[] para3={"cabinetTempletId",""+cabinetTempletId,"deviceType","3"};
+		String[] para3={"cabinetTempletId",""+cabinetTempletId,"deviceType","2"};
 		List<CabinetTempletDevice> result3 =  this.ctdDAO.getListByNProperty(para3);
 					
 		List<Map<String, Object>> sw3list = new ArrayList<Map<String, Object>>();
@@ -99,9 +71,35 @@ public class CabinetTempletDeviceInfoCDAO {
 		sw3list.add(map32);
 		sw3list.add(map33);
 		
+		//获得该实验所需的二层交换机数量,以list.size记录
+		String[] para2={"cabinetTempletId",""+cabinetTempletId,"deviceType","3"};
+		List<CabinetTempletDevice> result2 =  this.ctdDAO.getListByNProperty(para2);
+					
+		List<Map<String, Object>> sw2list = new ArrayList<Map<String, Object>>();
+						
+		Map<String, Object> map21 = new HashMap<String, Object>();
+		map21.put("name", "二层交换机数量");
+						
+		Map<String, Object> map22 = new HashMap<String, Object>();
+		map22.put("name", result2.size());
+		if(isEdit){
+			map22.put("class", "btn btn-link a edit");
+			map22.put("onclick", "editable(this);");
+			map22.put("value", "Sw2");
+		}
+				
+							
+		Map<String, Object> map23 = new HashMap<String, Object>();
+		map23.put("name", "");
+
+		sw2list.add(map21);
+		sw2list.add(map22);
+		sw2list.add(map23);
+		
 		list.add(Rtlist);
-		list.add(sw2list);
 		list.add(sw3list);
+		list.add(sw2list);
+		
 
 		return list;
 	}
@@ -133,8 +131,8 @@ public class CabinetTempletDeviceInfoCDAO {
 			Order++;
 		}
 		count = 1;
-		//重写二层交换机
-		while(count<=(Integer)deviceMap.get("Sw2")){
+		//重写三层交换机
+		while(count<=(Integer)deviceMap.get("Sw3")){
 			CabinetTempletDevice ctd = new CabinetTempletDevice();
 			ctd.setCabinetTempletId(cabinetTempletId);
 			ctd.setDeviceOrder(Order);
@@ -147,8 +145,8 @@ public class CabinetTempletDeviceInfoCDAO {
 			Order++;
 		}
 		count = 1;
-		//重写三层交换机
-		while(count<=(Integer)deviceMap.get("Sw3")){
+		//重写二层交换机
+		while(count<=(Integer)deviceMap.get("Sw2")){
 			CabinetTempletDevice ctd = new CabinetTempletDevice();
 			ctd.setCabinetTempletId(cabinetTempletId);
 			ctd.setDeviceOrder(Order);
@@ -160,8 +158,65 @@ public class CabinetTempletDeviceInfoCDAO {
 			count++;
 			Order++;
 		}
-		
+		count = 1;
+		//重写PC，默认4个
+		while(count<=4){
+			CabinetTempletDevice ctd = new CabinetTempletDevice();
+			ctd.setCabinetTempletId(cabinetTempletId);
+			ctd.setDeviceOrder(Order);
+			ctd.setDeviceType(4);
+			ctd.setLanPortNum(8);
+			ctd.setWanPortNum(8);
+			flag=this.ctdDAO.add(ctd);
+			if(flag==false)  success=flag;
+			count++;
+			Order++;
+		}
 		return success;
 	}
-	
+	//返回本实验所需要的设备数量
+	public Integer equipmentNumber(String expId){
+		
+		//获得实验机柜模板Id
+		Integer EXPID = Integer.parseInt(expId);
+		ExpDAO eDAO = new ExpDAO();
+		Exp exp = (Exp) eDAO.getUniqueByProperty("expId",EXPID );
+		Integer cabinetTempletId = exp.getExpCabinetTempletId();
+		
+		//获得设备表
+		@SuppressWarnings("unchecked")
+		List<CabinetTempletDevice> ctdlist = this.ctdDAO.getListByProperty("cabinetTempletId", cabinetTempletId);
+		return ctdlist.size();
+	}
+	//生成设备名称字符串
+	public String equipment(String expId){
+		String name_str = "";
+		
+		//获得实验机柜模板Id
+		Integer EXPID = Integer.parseInt(expId);
+		ExpDAO eDAO = new ExpDAO();
+		Exp exp = (Exp) eDAO.getUniqueByProperty("expId",EXPID );
+		Integer cabinetTempletId = exp.getExpCabinetTempletId();
+		
+		@SuppressWarnings("unchecked")
+		List<CabinetTempletDevice> ctdlist = this.ctdDAO.getListByProperty("cabinetTempletId", cabinetTempletId);
+		int deviceOrder=1;
+		while(deviceOrder <= ctdlist.size()){
+			
+			//按序号取设备
+			String para[]={"cabinetTempletId",""+cabinetTempletId,"deviceOrder",""+deviceOrder};
+			CabinetTempletDevice ctd = (CabinetTempletDevice)this.ctdDAO.getByNProperty(para);
+			Integer deviceType = ctd.getDeviceType();
+			switch(deviceType){
+				case 1 : name_str = name_str + "RT##";break;
+				case 2 : name_str = name_str + "SW3##";break;
+				case 3 : name_str = name_str + "SW2##";break;
+				case 4 : name_str = name_str + "PC##";break;
+			}
+			deviceOrder++;
+		}
+		String result = name_str.substring(0, name_str.length()-2);
+		System.out.println("result");
+		return result;
+	}
 }

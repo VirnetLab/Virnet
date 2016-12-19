@@ -11,6 +11,11 @@ public class ExpVerify implements java.io.Serializable {
 	private Integer expTaskOrder;
 	private Integer verifyType;
 	
+	
+	public ExpVerify() {
+
+	}
+
 	public ExpVerify(Integer expVerifyId, Integer expId, Integer expTaskOrder, Integer verifyType) {
 		super();
 		this.expVerifyId = expVerifyId;

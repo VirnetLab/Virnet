@@ -24,6 +24,12 @@ import virnet.experiment.operationapi.NTCEdit;
 import virnet.experiment.operationapi.PCExecute;
 import virnet.experiment.resourceapi.ResourceAllocate;
 import virnet.experiment.resourceapi.ResourceRelease;
+import virnet.management.combinedao.CabinetTempletDeviceInfoCDAO;
+import virnet.experiment.combinedao.ExpConnectCDAO;
+import virnet.experiment.combinedao.ExpTopoCDAO;
+import virnet.experiment.combinedao.ExpTopoPositionCDAO;
+import virnet.experiment.dao.ExpTopoDAO;
+import virnet.experiment.entity.ExpTopo;;
 
 //import virnet.assistantapi.ExperimentInit;
 //import virnet.resourceapi.ResourceAllocate;
@@ -136,7 +142,12 @@ public class MainSystemWebSocketHandler extends TextWebSocketHandler implements 
     		//进入实验界面请求设备信息生成域
         	if(jsonString.getString("type").equals("requestEquipment"))
         	{
-        		jsonString.put("equipmentNumber","5");
+        		//以实验Id查询设备数量
+        		String expId = jsonString.getString("expId");
+        		CabinetTempletDeviceInfoCDAO ctdDAO = new CabinetTempletDeviceInfoCDAO();
+        		Integer equipmentNumber = ctdDAO.equipmentNumber(expId);
+        		//记录设备数量
+        		jsonString.put("equipmentNumber",""+equipmentNumber);
         		jsonString.put("equipmentName", equip);
         		String mess = jsonString.toString();
         		wss.sendMessage(new TextMessage(mess));
@@ -145,42 +156,103 @@ public class MainSystemWebSocketHandler extends TextWebSocketHandler implements 
         	//实验开始初始化资源域
         	if(jsonString.getString("experimentStatus").equals("start"))
         	{	
+        		JSONObject ss = jsonString;
+        		
         		cc++;
         		if(cc==1){
-        		/*资源分配*/
-        		String cabinet_num="";
-        		long start = System.currentTimeMillis();
-        		String name_Str = "SW2##PC##PC##PC##PC";	//设备名串，“##”隔开，排列顺序即为设备在实验机柜中的序号(RT##SW2##SW2#SW3#PC##PC)
-        		String duration = "90";	//该实验最长持续时间(90)
-        		ResourceAllocate resourceAllocate = new ResourceAllocate(name_Str, duration);
-        		if(resourceAllocate.allocate()){
-        			cabinet_num = resourceAllocate.getCabinetNum();	//实验机柜编号
-        			String num_str = resourceAllocate.getNumStr();	//设备序号串(1##3##5##4##2)
-        			String port_str = resourceAllocate.getPortInfoStr();//设备序号串对应下的各设备可用端口号串(1@2@3@4@5@6##1@2@3@4@6##1##1@2@3@4@5@6##1@2@3@4@5@6)
-        			//experimentInit.setCabinet_num(cabinet_num);	//将实验机柜编号暂时保存*/
+        			/*资源分配*/
+        			String cabinet_num="";
+        			String expId = jsonString.getString("expId");
+        			CabinetTempletDeviceInfoCDAO ctdDAO = new CabinetTempletDeviceInfoCDAO();
+        			//设备名串，“##”隔开，排列顺序即为设备在实验机柜中的序号(RT##SW2##SW2#SW3#PC##PC)
+        			String name_Str = ctdDAO.equipment(expId);	
+        			String duration = "90";	//该实验最长持续时间(90)
+        			long start = System.currentTimeMillis();
+        			ResourceAllocate resourceAllocate = new ResourceAllocate(name_Str, duration);
+        			if(resourceAllocate.allocate()){
+        				cabinet_num = resourceAllocate.getCabinetNum();	//实验机柜编号
+        				String num_str = resourceAllocate.getNumStr();	//设备序号串(1##3##5##4##2)
+        				String port_str = resourceAllocate.getPortInfoStr();//设备序号串对应下的各设备可用端口号串(1@2@3@4@5@6##1@2@3@4@6##1##1@2@3@4@5@6##1@2@3@4@5@6)
+        				//experimentInit.setCabinet_num(cabinet_num);	//将实验机柜编号暂时保存*/
         			
-        			//将参数传递到前端
-        			jsonString.put("type", "sendEquipment");   
-        			jsonString.put("equipmentName",name_Str);
-        			jsonString.put("equipmentNumStr", num_str);
-        			jsonString.put("equipmentPortStr", port_str);        			
-        			sendToGroup(wss,jsonString);            	
-        			//System.out.println(cabinet_num);
-        			//System.out.println(num_str);
-        			//System.out.println(port_str);
-        		}
-        		else{
-        			System.out.println("false!");
-        			System.out.println(resourceAllocate.getReturnDetail());
-        		}
-        		long end = System.currentTimeMillis();
-        		System.out.println("资源分配用时："+(end-start)+"ms");
+        				//将参数传递到前端
+        				jsonString.put("type", "sendEquipment");   
+        				jsonString.put("equipmentName",name_Str);
+        				jsonString.put("equipmentNumStr", num_str);
+        				jsonString.put("equipmentPortStr", port_str);        			
+        				sendToGroup(wss,jsonString);            	
+        				//System.out.println(cabinet_num);
+        				System.out.println("设备序号串"+num_str);
+        				//System.out.println(port_str);
+        			}
+        			else{
+        				System.out.println("false!");
+        				System.out.println(resourceAllocate.getReturnDetail());
+        			}
+        			long end = System.currentTimeMillis();
+        			System.out.println("资源分配用时："+(end-start)+"ms");
         		
-        		//存储用户组和实验机柜编号的map
-        		MapEquipment.put(userMap.get(wss), cabinet_num); 
+        			//存储用户组和实验机柜编号的map
+        			MapEquipment.put(userMap.get(wss), cabinet_num); 
         		
-        		jsonString.put("experimentStatus","");
-        	}
+        			jsonString.put("experimentStatus","");
+        			
+        			//显示初始拓扑，没有则按默认位置放置
+        			
+        			//画图所需要的信息
+        			String leftNUM_Str = "";
+        			String rightNUM_Str = "";
+        			String leftport_Str = "";
+        			String rightport_Str = "";
+        			String position = "";
+        			
+        			ExpTopoDAO tDAO = new ExpTopoDAO();
+        			String para[] ={"expId",expId,"expTaskOrder","0"};
+        			ExpTopo topo = (ExpTopo)tDAO.getByNProperty(para);
+        			//不存在初始拓扑
+        			if(topo == null){
+        				//各设备采用默认位置
+        				ExpTopoPositionCDAO tpDAO = new ExpTopoPositionCDAO();
+        				//返回各个设备的默认位置，参数为设备名串
+        				position = tpDAO.defaultPosition(name_Str);
+        				ss.put("position", position);
+        				ss.put("type", "equipConnectionInfo");
+        				String mess1 = ss.toString();
+        				//发送到前端
+        				wss.sendMessage(new TextMessage(mess1));
+        				
+        			}
+        			//存在初始拓扑
+        			else{
+        				
+        				//返回各个设备的位置，参数为实验模板拓扑Id
+        				ExpTopoPositionCDAO tpDAO = new ExpTopoPositionCDAO();
+        				position = tpDAO.position(topo.getExpTopoId());
+        				
+        				ExpConnectCDAO  ctDAO = new ExpConnectCDAO();
+        				String connectInfo = ctDAO.connectInfo(topo.getExpTopoId());
+        				
+        				String connect[] = connectInfo.split(",");
+        				//返回左端设备串
+        				leftNUM_Str = connect[0];
+        				//返回右端设备串
+        				rightNUM_Str = connect[1];
+        				//返回左端设备端口
+        				leftport_Str = connect[2];
+        				//返回右端设备端口
+        				rightport_Str = connect[3];
+        				
+        				ss.put("position", position);
+        				ss.put("leftNUM_Str", leftNUM_Str);
+        				ss.put("rightNUM_Str", rightNUM_Str);
+        				ss.put("leftport_Str", leftport_Str);
+        				ss.put("rightport_Str", rightport_Str);
+        			
+        				ss.put("type", "equipConnectionInfo");
+        				String mess1 = ss.toString();
+        				wss.sendMessage(new TextMessage(mess1));
+        			}
+        		}
         	}
         	
         	//Jtopu提交后，拓扑连接域
@@ -223,12 +295,44 @@ public class MainSystemWebSocketHandler extends TextWebSocketHandler implements 
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                }     
-        		
-        		
-        		
-        		
+                }
         	}
+        		//保存为任务标准拓扑，任务号为0时为初始拓扑
+            	if(jsonString.getString("type").equals("topoSaveToDatabase")){
+            		    
+            		String leftNUM_Str = jsonString.getString("leftNUM_Str");		//左端设备序号串，“##”隔开
+            		String rightNUM_Str = jsonString.getString("rightNUM_Str");	    //右端设备序号串，“##”隔开
+            		String leftport_Str = jsonString.getString("leftport_Str");	    //左端设备端口序号串，“##”隔开
+            		String rightport_Str = jsonString.getString("rightport_Str");	//右端设备端口序号串，“##”隔开
+            		String position = jsonString.getString("position");				//设备的位置 设备的X，Y坐标以空格相隔，设备间以逗号相隔
+            		String expId = jsonString.getString("expId");
+            		String expTaskOrder = jsonString.getString("expTaskOrder");           		
+            		
+            		//修改实验模板拓扑表
+            		ExpTopoCDAO tcDAO = new ExpTopoCDAO();
+            		Integer ExpTopoId = tcDAO.edit(expId,expTaskOrder,leftNUM_Str);
+            		if(ExpTopoId!=0){
+            			//修改实验模板连接表
+            			ExpConnectCDAO cCDAO = new ExpConnectCDAO();
+            			boolean connectSuccess = cCDAO.edit(ExpTopoId, leftNUM_Str, rightNUM_Str, leftport_Str, rightport_Str);
+            			
+            			//修改实验模板拓扑位置表
+            			ExpTopoPositionCDAO tpCDAO = new ExpTopoPositionCDAO();
+            			boolean positionSuccess = tpCDAO.edit(ExpTopoId,position);
+            			
+            			if(connectSuccess&&positionSuccess)
+            				jsonString.put("success", true);
+            			else
+            				jsonString.put("success", false);
+            		}
+            		else{
+            			System.out.println("false");
+            			jsonString.put("success", false);
+            		}	
+            		String mess = jsonString.toString();
+            		//发送到前端
+            		wss.sendMessage(new TextMessage(mess));
+            	}
         	
         	//输入的设备命令和输出设备结果处理域
         	if(jsonString.getString("type").equals("command"))

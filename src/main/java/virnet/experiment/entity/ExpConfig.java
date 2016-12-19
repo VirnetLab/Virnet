@@ -11,6 +11,10 @@ public class ExpConfig implements java.io.Serializable {
 	private Integer expTaskOrder;
 	private String  expConfigNum;
 	
+	public ExpConfig() {
+		
+	}
+
 	public ExpConfig(Integer expConfigId, Integer expId, Integer expTaskOrder, String expConfigNum) {
 		super();
 		this.expConfigId = expConfigId;

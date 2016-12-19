@@ -19,6 +19,7 @@
 	//	out.print(userName);
 		//session.setAttribute("username",userName);
 		
+		Integer expId=1;                      //假定实验号为1
 		session.setAttribute("pageType","arrange");
 		%>
 	<button id="sendBtn" onclick="showAndHideThings()" >点击排队</button> 
@@ -26,7 +27,8 @@
 	 <div class="loader" id="loader" style="display:none;">队列中...</div>
 	 <form id = "submitform" action="exp.jsp" method="get" style="display:none;" >
               <input id = "userName" type="text" name="username"></input>
-              <input id ="groupID" type="text" name="workGroup"></input>        
+              <input id ="groupID" type="text" name="workGroup"></input>  
+              <input id ="expId" type="text" name="expId"></input>      
      </form>
 </body>
 </html>

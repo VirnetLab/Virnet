@@ -17,9 +17,12 @@
 	<!-- [if IE]<script> push_alert("Please use Chrome or other webkit kernel browsers");</script>-->
  </head>
  <body class="cbp-spmenu-push">
-
+ 
+<!-- 暂定实验号为1 应由UserManagement.jsp传过来 -->
+<%int expId = 2; %>
+<body onload="start(<%=expId%>)">
  <div id = "override" >
-         <input id="btnshow000" type="button" value="开始实验" onclick="showdiv();"/>
+         <input id="btnshow000" type="button" value="开始实验" onclick="showdiv()"/>
  </div>
  	    <input id="userName" type="hidden" value="<%=request.getParameter("username")%>">
  		<%session.setAttribute("pageType","experiment");
@@ -133,9 +136,9 @@
 				
 				<button style="margin-left:20px" onclick="topo.save()">暂存</button>
 				<button onclick="topo.submit()">提交</button>	
-				<button onclick="topo.saveToDatabase()">初始拓扑</button>			
+				<button onclick="topo.saveToDatabase(0,<%=expId%>)">初始拓扑</button>	   <!-- 参数为任务号，任务号为0表示初始拓扑  后面为实验Id-->		
 			</div>
-	</div>	
+	</div>
 	<script src="./res/js/jtopo-0.4.8-min.js"></script>
 	<script src="./res/js/topoCore.js"></script>
 	<script src="./res/js/exp.js"></script>

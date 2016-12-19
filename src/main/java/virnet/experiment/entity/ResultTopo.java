@@ -11,6 +11,10 @@ public class ResultTopo implements java.io.Serializable {
 	private Integer resultTopoConnetNum;
 	private String  resultTopoRemark;
 	
+	public ResultTopo() {
+
+	}
+
 	public ResultTopo(Integer resultTopoId, Integer resultTaskId, Integer resultTopoConnetNum, String resultTopoRemark) {
 		super();
 		this.resultTopoId = resultTopoId;

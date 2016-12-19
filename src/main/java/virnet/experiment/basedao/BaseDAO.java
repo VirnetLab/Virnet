@@ -20,7 +20,6 @@ public class BaseDAO {
             tx = session.beginTransaction();
             session.save(obj);
             tx.commit();
-            System.out.println("good");
             return true;
 
         } catch (Exception e) {
