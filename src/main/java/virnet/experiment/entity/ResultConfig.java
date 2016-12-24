@@ -11,6 +11,10 @@ public class ResultConfig implements java.io.Serializable {
 	private Integer resultTaskId;
 	private String  resultConfigNum;
 	
+	public ResultConfig() {
+
+	}
+
 	public ResultConfig(Integer resultConfigId, Integer resultTaskId, String resultConfigNum) {
 		super();
 		this.resultConfigId = resultConfigId;

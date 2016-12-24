@@ -18,6 +18,10 @@ public class ExpVerifyPing implements java.io.Serializable {
 	private Integer destPCPortOrder;
 	private Integer successFlag;
 	
+	public ExpVerifyPing() {
+
+	}
+
 	public ExpVerifyPing(Integer expVerifyPingId, Integer expVerifyId, Integer sourcePCOrder, String sourcePCIp,
 			Integer sourcePCDeviceOrder, Integer sourcePCPortOrder, Integer destPCOrder, String destPCIp,
 			Integer destPCDeviceOrder, Integer destPCPortOrder, Integer successFlag) {

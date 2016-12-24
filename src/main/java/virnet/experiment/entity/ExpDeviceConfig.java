@@ -11,6 +11,10 @@ public class ExpDeviceConfig implements java.io.Serializable {
 	private Integer expDeviceOrder;
 	private String configFile;
 	
+	public ExpDeviceConfig() {
+		
+	}
+
 	public ExpDeviceConfig(Integer expDeviceConfigId,Integer expConfigId, Integer expDeviceOrder, String configFile) {
 		super();
 		this.expDeviceConfigId = expDeviceConfigId;

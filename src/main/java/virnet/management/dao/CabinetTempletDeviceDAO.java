@@ -1,45 +1,45 @@
-package virnet.experiment.dao;
+package virnet.management.dao;
 
 import java.io.Serializable;
 import java.util.List;
 
-import virnet.experiment.basedao.BaseDAO;
-import virnet.experiment.entity.CabinetTemplet;
+import virnet.management.basedao.BaseDAO;
+import virnet.management.entity.CabinetTempletDevice;
 //import virnet.management.util.PageUtil;
 
-public class CabinetTempletDAO extends BaseDAO{
-	 public boolean add(CabinetTemplet obj) {
+public class CabinetTempletDeviceDAO extends BaseDAO{
+	 public boolean add(CabinetTempletDevice obj) {
         return super.add(obj);
     }  
 
    
-    public void delete(CabinetTemplet obj) {
+    public void delete(CabinetTempletDevice obj) {
         super.delete(obj);
     }
 
 	public void deleteById(Serializable id) {
-        super.deleteById(CabinetTemplet.class, id);
+        super.deleteById(CabinetTempletDevice.class, id);
     }
 
    
-    public boolean update(CabinetTemplet obj) {
+    public boolean update(CabinetTempletDevice obj) {
     	return super.update(obj);
     }
 
    
     public Object get(Serializable id) {
-    	Object o = super.get(CabinetTemplet.class, id);
+    	Object o = super.get(CabinetTempletDevice.class, id);
 		return o;
     }
 
    
 	public Object getByNProperty(String... strs) {
-    	Object o = super.getByNProperty(CabinetTemplet.class, strs);
+    	Object o = super.getByNProperty(CabinetTempletDevice.class, strs);
 		return o;
     }
 
 	public Object getUniqueByProperty(String pName, Object pValue) {
-    	Object o = super.getUniqueByProperty(CabinetTemplet.class, pName, pValue);
+    	Object o = super.getUniqueByProperty(CabinetTempletDevice.class, pName, pValue);
 		return o;
     }
 
@@ -50,7 +50,7 @@ public class CabinetTempletDAO extends BaseDAO{
     }
 
 	public Object getUniqueBySql(String sql) {
-    		Object o = super.getUniqueBySql(sql, CabinetTemplet.class);
+    		Object o = super.getUniqueBySql(sql, CabinetTempletDevice.class);
     	return o;
     }
 
@@ -59,7 +59,7 @@ public class CabinetTempletDAO extends BaseDAO{
    
     @SuppressWarnings({ "rawtypes" })
 	public List getList() {
-    	List list = super.getList(CabinetTemplet.class);
+    	List list = super.getList(CabinetTempletDevice.class);
     	return list;
     }
 
@@ -67,21 +67,21 @@ public class CabinetTempletDAO extends BaseDAO{
     @SuppressWarnings({ "rawtypes" })
 	public List getListByProperty(String pName,
             Object pValue) {
-    	List list = super.getListByProperty(CabinetTemplet.class, pName, pValue);
+    	List list = super.getListByProperty(CabinetTempletDevice.class, pName, pValue);
     	return list;	    	
     }
 
    
     @SuppressWarnings({ "rawtypes" })
 	public List getListByProperty(String pName, Object pValue, String condition) {
-    	List list = super.getListByProperty(CabinetTemplet.class, pName, pValue, condition);
+    	List list = super.getListByProperty(CabinetTempletDevice.class, pName, pValue, condition);
     	return list;
     }
 
    
     @SuppressWarnings({ "rawtypes" })
 	public List getListByNProperty(String... strs) {
-    	List list = super.getListByNProperty(CabinetTemplet.class, strs);
+    	List list = super.getListByNProperty(CabinetTempletDevice.class, strs);
     	return list;
     }
 
@@ -95,7 +95,7 @@ public class CabinetTempletDAO extends BaseDAO{
    
     @SuppressWarnings("rawtypes")
 	public List getListBySql(String sql) {
-    	List list = super.getListBySql(sql, CabinetTemplet.class);
+    	List list = super.getListBySql(sql, CabinetTempletDevice.class);
     	return list;
     }
 

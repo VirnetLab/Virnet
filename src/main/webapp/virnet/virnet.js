@@ -399,11 +399,9 @@ function editContent(){
 	});
 }
 
-//function initializeExp(name,group){
-//	alert(name);
-//	alert('userManagement.jsp?username＝'+ name +'&workgroup＝'+ group);
-//	window.location.href='userManagement.jsp?username＝'+ name +'&workgroup＝'+ group;
-//}
+function initializeExp(){
+	window.location.href='http://localhost:8080/virnet/userManagement.jsp';
+}
 
 
 /**
@@ -512,7 +510,7 @@ function addtask(){
 	    	var body = $("#content");
 	    	body.empty();
 	    	
-	    	alert(data["tittle"]["data"]);
+	    	//alert(data["tittle"]["data"]);
 
 	    	if(data["tittle"] != null){
 	    		var h = $("<h></h>");

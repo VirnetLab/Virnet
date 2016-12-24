@@ -13,6 +13,10 @@ public class ExpConnect implements java.io.Serializable {
 	private Integer device2Order;
 	private Integer device2PortOrder;
 	
+	public ExpConnect() {
+		
+	}
+
 	public ExpConnect(Integer expConnectId, Integer expTopoId, Integer device1Order, Integer device1PortOrder,
 			Integer device2Order, Integer device2PortOrder) {
 		super();

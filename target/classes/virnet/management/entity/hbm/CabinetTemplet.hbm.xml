@@ -7,7 +7,7 @@
 -->
 
 <hibernate-mapping>
-    <class name="virnet.experiment.entity.CabinetTemplet" table="cabinettemplet" catalog="virnet">
+    <class name="virnet.management.entity.CabinetTemplet" table="cabinettemplet" catalog="virnet">
         <id name="cabinetTempletId" type="java.lang.Integer">
             <column name="CABINETTEMPLET_ID" />
             <generator class="identity" />

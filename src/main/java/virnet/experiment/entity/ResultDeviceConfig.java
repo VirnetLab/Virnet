@@ -9,7 +9,11 @@ public class ResultDeviceConfig implements java.io.Serializable {
 	private Integer resultConfigId;
 	private Integer DeviceOrder;
 	private String configFile;
-	
+		
+	public ResultDeviceConfig() {
+		
+	}
+
 	public ResultDeviceConfig(Integer resultDeviceConfigId,Integer resultConfigId, Integer deviceOrder, String configFile) {
 		super();
 		this.resultDeviceConfigId = resultDeviceConfigId;

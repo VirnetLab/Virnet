@@ -7,7 +7,7 @@
 -->
 
 <hibernate-mapping>
-    <class name="virnet.experiment.entity.CabinetTempletDevice" table="cabinettempletdevice" catalog="virnet">
+    <class name="virnet.management.entity.CabinetTempletDevice" table="cabinettempletdevice" catalog="virnet">
         <id name="cabinetTempletDeviceId" type="java.lang.Integer">
             <column name="CABINETTEMPLETDEVICE_ID" />
             <generator class="identity" />
@@ -15,13 +15,10 @@
         <property name="cabinetTempletId" type="java.lang.Integer">
             <column name="CABINETTEMPLETDEVICE_CaseTemplet_ID" length="65535" />
         </property>
-        <property name="deviceName" type="java.lang.String">
-            <column name="CABINETTEMPLETDEVICE_Name" length="65535" />
-        </property>
         <property name="deviceOrder" type="java.lang.Integer">
             <column name="CABINETTEMPLETDEVICE_Device_Order" length="65535" />
         </property>
-        <property name="deviceType" type="java.lang.String">
+        <property name="deviceType" type="java.lang.Integer">
             <column name="CABINETTEMPLETDEVICE_Device_Type" length="65535" />
         </property>
         <property name="lanPortNum" type="java.lang.Integer">

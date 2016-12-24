@@ -10,6 +10,10 @@ public class ResultVerify implements java.io.Serializable {
 	private Integer resultTaskId;
 	private Integer resultverifyType;
 	
+	public ResultVerify() {
+
+	}
+
 	public ResultVerify(Integer resultVerifyId, Integer resultTaskId, Integer resultverifyType) {
 		super();
 		this.resultVerifyId = resultVerifyId;

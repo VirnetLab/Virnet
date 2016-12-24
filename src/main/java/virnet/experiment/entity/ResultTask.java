@@ -13,7 +13,11 @@ public class ResultTask implements java.io.Serializable {
 	private Integer resultTaskOrder;
 	private Integer resultTaskType;
 	private String  resultTaskContent;
-	
+		
+	public ResultTask() {
+
+	}
+
 	public ResultTask(Integer resultTaskId, Integer resultCaseId, Integer resultExpId, Integer resultTaskOrder,
 			Integer resultTaskType, String resultTaskContent) {
 		super();

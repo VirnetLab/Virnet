@@ -13,6 +13,10 @@ public class ResultConnect implements java.io.Serializable {
 	private Integer device2Order;
 	private Integer device2PortOrder;
 	
+	public ResultConnect() {
+
+	}
+
 	public ResultConnect(Integer resultConnectId, Integer resultTopoId, Integer device1Order, Integer device1PortOrder,
 			Integer device2Order, Integer device2PortOrder) {
 		super();

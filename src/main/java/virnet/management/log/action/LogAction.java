@@ -36,6 +36,7 @@ public class LogAction  extends ActionSupport{
 		}
 		
 		this.session.put("cplist", data.getCharacterPowerlist());
+
 		return SUCCESS;
 	}
 	
