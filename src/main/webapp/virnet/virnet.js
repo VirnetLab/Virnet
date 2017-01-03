@@ -676,7 +676,11 @@ function fetchData(id, user, page, select){
 	     }
 	}); 
 }
-
+/**
+ * 执行ajax操作
+ * 由于设备表不是从sidebar响应得到的（机柜表才是）
+ * 因此此处另写一个专门给设备的函数
+ * */
 function fetchFacilitiesData(id, user, page, select, physicsMachinesName){
 
 	$.ajax( {    

@@ -9,7 +9,6 @@ public class ExpConnectCDAO {
 	
 	private ExpConnectDAO cDAO = new ExpConnectDAO();
 	
-	//返回实验模板拓扑Id,device是一个以#分割的字符串，可以得出连接数
 	public boolean edit(Integer ExpTopoId,String leftNUM_Str,String rightNUM_Str, String leftport_Str,String rightport_Str){
 		
 		String leftNUM[] = leftNUM_Str.split("##");

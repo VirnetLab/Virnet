@@ -11,7 +11,6 @@
     
 
 	   
-    <annotation-driven />
     
     <!-- 自动扫描的包名 -->
     <context:component-scan base-package="virnet.experiment.webSocket.config" >
@@ -42,6 +41,5 @@
     <resources mapping="/css/**" location="/css/"
                    cache-period="31556926" />
 
-	
 	
 </beans:beans>

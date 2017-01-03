@@ -16,23 +16,30 @@ import java.net.UnknownHostException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import virnet.experiment.combinedao.ExpConfigCDAO;
+import virnet.experiment.combinedao.ExpDeviceConfigCDAO;
+
 public class ExperimentSave {
 	
 	private static final String operationServerIP = "202.112.113.135";
 	private static final int operationServerPort = 8342;
-	private static final String FILEPATH = "D:/VirnetFileForSave";
-	private String cabinet_NUM;		//ʵ������
+	private static final String FILEPATH = "D:/VirnetFileForSave";	
 	//private int timeout = 5000;
 	private String filepath_info="";
 	private Socket connectToServer;
-	private DataOutputStream osToServer = null;	//������������������
-	private DataInputStream isFromServer = null;	//�ӷ����������������
+	private DataOutputStream osToServer = null;	
+	private DataInputStream isFromServer = null;	
 	private InputStream is = null;
 	private String result = null;
     private String detail = null;
+    private String cabinet_NUM;	
+    private String expId;
+    private String expTaskOrder;
     
-    public ExperimentSave(String cabinet_num) {
+    public ExperimentSave(String cabinet_num,String expId,String expTaskOrder) {
     	this.cabinet_NUM = cabinet_num;
+    	this.expId = expId;
+    	this.expTaskOrder = expTaskOrder;
     }
     public boolean save() {
     	try {
@@ -85,7 +92,7 @@ public class ExperimentSave {
 			}
     	}
 		byte[] buffer=new byte[count];
-    	int readCount = 0; // �Ѿ��ɹ���ȡ���ֽڵĸ���
+    	int readCount = 0; 
     	while (readCount < count) {
     		try {
 				readCount += isFromServer.read(buffer, readCount, count - readCount);
@@ -97,6 +104,8 @@ public class ExperimentSave {
     	}
         JSONObject returnjson = null;
         try {
+        	String t = new String(buffer);
+        	System.out.println("buffer:"+t);
 			returnjson = new JSONObject(new String(buffer));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -104,6 +113,7 @@ public class ExperimentSave {
 			return false;
 		}
         try {
+        	System.out.println(returnjson.toString());
 			result = returnjson.getString("result");
 			detail = returnjson.getString("detail");
 		} catch (JSONException e) {
@@ -112,10 +122,11 @@ public class ExperimentSave {
 			return false;
 		}
         if(result.equals("fail")) {
+        	System.out.println("fail");
         	return false;
         }
 		BufferedReader br = new BufferedReader(new InputStreamReader(is));
-		String filenum_str = null;	//�����ļ�����
+		String filenum_str = null;	
 		int filenum;
 		try {
 			filenum_str = br.readLine();
@@ -129,25 +140,63 @@ public class ExperimentSave {
             f.mkdir();    
         }
 		filenum = Integer.parseInt(filenum_str);
+		System.out.println("文件数"+filenum);
 		String[] filepath_arr = new String[filenum];
-		String thisfilepath = FILEPATH+"/";
-		for(int i = 0;i < filenum;i++) {
+		
+		//修改实验模板配置表  其中 filenum和devicenum是等价的
+		ExpConfigCDAO ccDAO = new ExpConfigCDAO();
+		
+		//获得实验模板设备配置表的Id
+		Integer configId = ccDAO.edit(expId, expTaskOrder, filenum);
+		
+		//删除实验模板设备配置表相关信息，准备重写
+		ExpDeviceConfigCDAO dcDAO = new ExpDeviceConfigCDAO();
+		dcDAO.delete(configId);
+		boolean flag = true;
+		//操作是否成功的返回值
+        boolean success = true;
+		for(int i = 0;i < filenum;i++) {			
 			try {
-				String thisfilename = br.readLine();
+				String thisfilepath = FILEPATH+"/";
+				
+				String thisfilename = br.readLine();             //本次操作的文件
 				System.out.println(thisfilename);
-				//long len = isFromServer.readLong();
-				String filelen = br.readLine();
+				
+				String filelen = br.readLine();              //文件长度
+				System.out.println(filelen);
+
 				int len = Integer.parseInt(filelen);
 				thisfilepath += thisfilename;
 				filepath_arr[i] = thisfilepath;
-				FileOutputStream fos = new FileOutputStream(new File(thisfilepath));      
-                byte[] inputByte = new byte[len];     
+				FileOutputStream fos = new FileOutputStream(new File(thisfilepath)); 
+				
+				//该字节流数组用于接受一层发来的配置文件内容
+                byte[] inputByte = new byte[len];                  
+                //该string类用于写入数据库
+                String configInfo="";
+                
+                //sum与length用于判断本次读取是否完整
                 int length;
                 long sum = 0;
-                while ((length = isFromServer.read(inputByte, 0, inputByte.length)) > 0) {  
+                while ((length = isFromServer.read(inputByte, 0, inputByte.length)) > 0) {   //按长度读取内容
+                	
+                	//写入本地文件，以后讨论是否需要在本地建立文件，此处先保留本地操作
                     fos.write(inputByte, 0, length);  
                     fos.flush();
-                    sum += length;	//�����Ż������˶��ļ�����Ƚ����ж�
+                    sum += length;
+                    
+                    String temp = new String(inputByte);
+                    configInfo = configInfo + temp;
+                    
+                    //本设备读取完整，则写入数据库
+                    if(sum==len){
+                    	//filenum是从0开始的，因此设备序号应为i+1
+                    	System.out.println(configInfo);
+                    	flag = dcDAO.edit(configId, i+1, configInfo);
+                    	if(flag == false)
+                    		success = false;
+                    	break;
+                    }                 	
                 }
                 fos.close();
 			} catch (IOException e) {
@@ -159,14 +208,15 @@ public class ExperimentSave {
 			filepath_info = filepath_info + filepath_arr[j] + "##";
 		}
 		filepath_info = filepath_info.substring(0, filepath_info.length() - 2);
-		return true;
+		
+		return success;
     }
     
-    /*�õ�ʵ�鱣�������������ϸ��Ϣ*/
+   
 	public String getReturnDetail() {
 		return detail;
 	}
-	/*�õ�ʵ�鱣�������������ϸ��Ϣ*/
+
 	public String getFilePathInfo() {
 		return filepath_info;
 	}
