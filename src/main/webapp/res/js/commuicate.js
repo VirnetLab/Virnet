@@ -13,6 +13,7 @@ var messageJson = {
 					"flag":"experiment",
 					"experimentStatus":"default",
 					"type":"default",
+					"cabinet_num":"default",
 					"color":"default",
 					"content":"default",
 					"user":"default",
@@ -29,7 +30,8 @@ var messageJson = {
 					"rightport_Str":"default",	//右端设备端口序号串，“##”隔开
 					"success":"default",
 					"expId":"default",          //实验Id     
-					"expTaskOrder":"default"
+					"expTaskOrder":"default",    //当前操作的任务序号
+					"expTaskNum":"default"     //本实验的任务个数（包含初始）
 				  };
 //判断当前浏览器是否支持WebSocket
   if ('WebSocket' in window) {
@@ -60,6 +62,9 @@ websocket.onmessage = function(event){
 	  if(object.type == "requestEquipment")
 	  {
 		 var temp = object.equipmentName;
+		 messageJson.equipmentName = object.equipmentName;
+		 messageJson.equipmentNumber = object.equipmentNumber;
+		 messageJson.expTaskNum = object.expTaskNum;
 		 EquipmentAmount = object.equipmentNumber;
 		 var keyValueArr = temp.split('##');		
 		 for(var i=0;i<keyValueArr.length;i++)
@@ -68,13 +73,18 @@ websocket.onmessage = function(event){
 		 }
 		 showCmdTab(object.equipmentNumber,keyArr);
 		 showHideCmdTab(object.equipmentNumber);
+		 topoAndConfigureButton();
 	  }
 	  
 	  if(object.type == "sendEquipment"){
 		//给jtopo需要的数据赋值
-			 name_str = object.equipmentName;
-			 num_str = object.equipmentNumStr;
-			 port_str = object.equipmentPortStr;
+		  messageJson.name_str = object.equipmentName;
+		  messageJson.num_str = object.equipmentNumStr;
+		  messageJson.port_str = object.equipmentPortStr;
+		  messageJson.cabinet_num = object.cabinet_num;
+		  num_str = object.equipmentNumStr;
+		  port_str = object.equipmentPortStr;
+		  name_str = object.equipmentName;
 			 canvas = $("#expCanvas").get(0);
 			 topo.init(canvas,name_str,num_str,port_str);
 			 topo.show();
@@ -127,11 +137,36 @@ websocket.onmessage = function(event){
 	  }
 	  if(object.type == "topoSaveToDatabase")
 	  {	
+		  //关闭加载页面
+		  document.getElementById("cover").style.display = "none";
+		  document.getElementById("layout").style.display = "none";
 		  if(object.success == true)
 		  {
 			  alert("保存成功");
 		  }
 		  else{alert("保存失败");}
+	  }
+	  if(object.type == "saveConfigureFile")
+	  {	
+		  //关闭加载页面
+		  document.getElementById("cover").style.display = "none";
+		  document.getElementById("layout").style.display = "none";
+		  if(object.success == true)
+		  {
+			  alert("保存成功");
+		  }
+		  else{alert("保存失败");}
+	  }	 
+	  if(object.type == "pingVerify")
+	  {	
+		  //关闭加载页面
+		  document.getElementById("cover").style.display = "none";
+		  document.getElementById("layout").style.display = "none";
+		  if(object.success == true)
+		  {
+			  alert("验证完成");
+		  }
+		  else{alert("验证被中断");}
 	  }
 }
 
@@ -144,8 +179,6 @@ websocket.onclose = function(){
 window.onbeforeunload = function(){
 	websocket.close();
 }
-
-
 
 //关闭连接
 function closeWebSocket(){
@@ -209,6 +242,9 @@ function editTopoLock(){
 	  websocket.send(mess);
 	}
 
+	/**
+	 * 
+	 */
 	function releaseTopoLock(){
 	  //为编辑拓扑解锁
 	  messageJson.lock = "unlock";
@@ -366,6 +402,8 @@ function releaseEquipment(){
     websocket.send(mess);
 }
 
+
+//将拓扑连接信息发送到一层NTC
 function topoSend(position , leftNUM_Str , rightNUM_Str , leftport_Str , rightport_Str){
 	messageJson.position = position;
     messageJson.leftNUM_Str = leftNUM_Str;
@@ -377,13 +415,13 @@ function topoSend(position , leftNUM_Str , rightNUM_Str , leftport_Str , rightpo
     websocket.send(mess);
 }
 
-function topoSaveToDatabase(position , leftNUM_Str , rightNUM_Str , leftport_Str , rightport_Str , expId , expTaskOrder){
+//保存拓扑信息到数据库
+function topoSaveToDatabase(position , leftNUM_Str , rightNUM_Str , leftport_Str , rightport_Str , expTaskOrder){
 	messageJson.position = position;
     messageJson.leftNUM_Str = leftNUM_Str;
     messageJson.rightNUM_Str = rightNUM_Str;
     messageJson.leftport_Str = leftport_Str;
     messageJson.rightport_Str = rightport_Str;
-    messageJson.expId = expId;
     messageJson.position = position;
     messageJson.expTaskOrder = expTaskOrder;
     messageJson.type = "topoSaveToDatabase";
@@ -507,4 +545,86 @@ function showHideCmdTab(order){
 		    	}
 			 }
 		 }
+}
+function pingVerify(taskOrder){
+	
+	//开启加载页面
+	document.getElementById("cover").style.display = "block";
+    document.getElementById("layout").style.display = "block";
+	
+	messageJson.type = "pingVerify";
+	messageJson.expTaskOrder = taskOrder;
+    var mess = JSON.stringify(messageJson);
+    websocket.send(mess);
+	
+}
+
+//按照任务号保存配置文件
+function saveConfigureFile(taskOrder){
+	
+	//开启加载页面
+	document.getElementById("cover").style.display = "block";
+    document.getElementById("layout").style.display = "block";
+	
+	messageJson.type = "saveConfigureFile";
+	messageJson.expTaskOrder = taskOrder;
+    var mess = JSON.stringify(messageJson);
+    websocket.send(mess);
+}
+
+//动态生成拓扑及配置操作按钮（按任务分类）
+function topoAndConfigureButton(){
+	
+	var expId = messageJson.expId;
+	var taskNum = parseInt(messageJson.expTaskNum);
+
+	//按照任务个数动态生成按钮,循环中taskNum加1是因为任务0不在任务表中
+	for(var i=0;i<taskNum+1;i++){
+		//拓扑
+		var buttonParent1 = document.getElementById("TopoSaveButton");
+		var newTopoButton = document.createElement('button');
+		newTopoButton.setAttribute("id", "topoSave");
+		//这里复用了editBtn的样式，以后可修改
+		newTopoButton.setAttribute("class", "editBtn");
+		newTopoButton.setAttribute("onclick", "topo.saveToDatabase(" + i + ")");
+		
+		if(i==0)
+			newTopoButton.innerHTML = "保存初始拓扑";
+		else
+			newTopoButton.innerHTML = "保存拓扑为任务"+i;
+	
+		buttonParent1.appendChild(newTopoButton);
+		
+		//配置
+		var buttonParent2 = document.getElementById("ConfigureSaveButton");
+		var newConfigureButton = document.createElement('button');
+		newConfigureButton.setAttribute("id", "configureSave");
+		//这里复用了editBtn的样式，以后可修改
+		newConfigureButton.setAttribute("class", "editBtn");
+		newConfigureButton.setAttribute("onclick", "saveConfigureFile(" + i + ")");
+		
+		if(i==0)
+			newConfigureButton.innerHTML = "保存初始配置";
+		else
+			newConfigureButton.innerHTML = "保存配置为任务"+i;
+	
+		buttonParent2.appendChild(newConfigureButton);
+		
+		//ping验证
+		var buttonParent3 = document.getElementById("pingVerifyButton");
+		var newPingVerifyButton = document.createElement('button');
+		newPingVerifyButton.setAttribute("id", "pingVerify");
+		//这里复用了editBtn的样式，以后可修改
+		newPingVerifyButton.setAttribute("class", "editBtn");
+		newPingVerifyButton.setAttribute("onclick", "pingVerify(" + i + ")");
+		
+		if(i==0)
+			newPingVerifyButton.innerHTML = "验证初始状态ping";
+		else
+			newPingVerifyButton.innerHTML = "验证任务"+i+"ping";
+
+		buttonParent3.appendChild(newPingVerifyButton);
+	}
+	
+	
 }

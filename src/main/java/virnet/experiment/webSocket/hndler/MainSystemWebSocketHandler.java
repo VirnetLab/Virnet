@@ -18,16 +18,22 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import net.sf.json.JSONObject;
+import virnet.experiment.assistantapi.ExperimentSave;
 import virnet.experiment.assistantapi.FacilityOutPut;
+import virnet.experiment.assistantapi.PCConfigureInfo;
+import virnet.experiment.assistantapi.PingVerify;
 import virnet.experiment.operationapi.FacilityConfigure;
 import virnet.experiment.operationapi.NTCEdit;
 import virnet.experiment.operationapi.PCExecute;
 import virnet.experiment.resourceapi.ResourceAllocate;
 import virnet.experiment.resourceapi.ResourceRelease;
 import virnet.management.combinedao.CabinetTempletDeviceInfoCDAO;
+import virnet.management.combinedao.TaskInfoCDAO;
 import virnet.experiment.combinedao.ExpConnectCDAO;
 import virnet.experiment.combinedao.ExpTopoCDAO;
 import virnet.experiment.combinedao.ExpTopoPositionCDAO;
+import virnet.experiment.combinedao.ExpVerifyCDAO;
+import virnet.experiment.combinedao.ExpVerifyPingCDAO;
 import virnet.experiment.dao.ExpTopoDAO;
 import virnet.experiment.entity.ExpTopo;;
 
@@ -59,9 +65,6 @@ public class MainSystemWebSocketHandler extends TextWebSocketHandler implements 
     
     //与某个客户端的连接会话，需要通过它来给客户端发送数据
     private WebSocketSession session;
-    
-    //该实验需要的设备列表
-    private static String equip = "SW2##PC##PC##PC##PC";
 
     //记录实验主界面用户名和用户组的session，用来传递用户名
   	private static ConcurrentHashMap<WebSocketSession, String> arrangeUserName = new ConcurrentHashMap<WebSocketSession, String>();
@@ -145,10 +148,20 @@ public class MainSystemWebSocketHandler extends TextWebSocketHandler implements 
         		//以实验Id查询设备数量
         		String expId = jsonString.getString("expId");
         		CabinetTempletDeviceInfoCDAO ctdDAO = new CabinetTempletDeviceInfoCDAO();
-        		Integer equipmentNumber = ctdDAO.equipmentNumber(expId);
+        		
         		//记录设备数量
-        		jsonString.put("equipmentNumber",""+equipmentNumber);
-        		jsonString.put("equipmentName", equip);
+        		Integer equipmentNumber = ctdDAO.equipmentNumber(expId);
+    			
+        		//设备名串，“##”隔开，排列顺序即为设备在实验机柜中的序号(RT##SW2##SW2#SW3#PC##PC)
+    			String name_Str = ctdDAO.equipment(expId);
+        		
+    			//任务个数
+    			TaskInfoCDAO tcDAO = new TaskInfoCDAO();
+    			Integer taskNum = tcDAO.taskNum(expId);
+    			
+    			jsonString.put("equipmentNumber",""+equipmentNumber);
+        		jsonString.put("equipmentName", name_Str);
+        		jsonString.put("expTaskNum", ""+taskNum);
         		String mess = jsonString.toString();
         		wss.sendMessage(new TextMessage(mess));
         	}
@@ -162,26 +175,27 @@ public class MainSystemWebSocketHandler extends TextWebSocketHandler implements 
         		if(cc==1){
         			/*资源分配*/
         			String cabinet_num="";
-        			String expId = jsonString.getString("expId");
-        			CabinetTempletDeviceInfoCDAO ctdDAO = new CabinetTempletDeviceInfoCDAO();
         			//设备名串，“##”隔开，排列顺序即为设备在实验机柜中的序号(RT##SW2##SW2#SW3#PC##PC)
-        			String name_Str = ctdDAO.equipment(expId);	
+        			String expId = jsonString.getString("expId");
+            		CabinetTempletDeviceInfoCDAO ctdDAO = new CabinetTempletDeviceInfoCDAO();
+        			String name_Str = ctdDAO.equipment(expId);
         			String duration = "90";	//该实验最长持续时间(90)
         			long start = System.currentTimeMillis();
         			ResourceAllocate resourceAllocate = new ResourceAllocate(name_Str, duration);
         			if(resourceAllocate.allocate()){
         				cabinet_num = resourceAllocate.getCabinetNum();	//实验机柜编号
-        				String num_str = resourceAllocate.getNumStr();	//设备序号串(1##3##5##4##2)
+        				String num_str = resourceAllocate.getNumStr();	//设备序号串
         				String port_str = resourceAllocate.getPortInfoStr();//设备序号串对应下的各设备可用端口号串(1@2@3@4@5@6##1@2@3@4@6##1##1@2@3@4@5@6##1@2@3@4@5@6)
         				//experimentInit.setCabinet_num(cabinet_num);	//将实验机柜编号暂时保存*/
         			
         				//将参数传递到前端
-        				jsonString.put("type", "sendEquipment");   
+        				jsonString.put("type", "sendEquipment"); 
         				jsonString.put("equipmentName",name_Str);
         				jsonString.put("equipmentNumStr", num_str);
-        				jsonString.put("equipmentPortStr", port_str);        			
+        				jsonString.put("equipmentPortStr", port_str);
+        				jsonString.put("cabinet_num",cabinet_num);
         				sendToGroup(wss,jsonString);            	
-        				//System.out.println(cabinet_num);
+        				System.out.println("机柜号"+cabinet_num);
         				System.out.println("设备序号串"+num_str);
         				//System.out.println(port_str);
         			}
@@ -206,6 +220,7 @@ public class MainSystemWebSocketHandler extends TextWebSocketHandler implements 
         			String rightport_Str = "";
         			String position = "";
         			
+   //     			String expId = jsonString.getString("expId");
         			ExpTopoDAO tDAO = new ExpTopoDAO();
         			String para[] ={"expId",expId,"expTaskOrder","0"};
         			ExpTopo topo = (ExpTopo)tDAO.getByNProperty(para);
@@ -340,7 +355,7 @@ public class MainSystemWebSocketHandler extends TextWebSocketHandler implements 
         		JSONObject ss = jsonString;
         		String equipmentNumber = jsonString.getString("inputEquipmentNumber");
         		String commandDetail = jsonString.getString("content");
-        		String[] sourceStrArray = equip.split("##");
+        		String[] sourceStrArray = jsonString.getString("equipmentName").split("##");
         		if(sourceStrArray[Integer.parseInt(jsonString.getString("inputEquipmentNumber"))].equals("PC"))
         		{
         			
@@ -382,8 +397,9 @@ public class MainSystemWebSocketHandler extends TextWebSocketHandler implements 
         	
         	//加锁域
         	if(jsonString.getString("type").equals("lock"))
-        	{       
-        		String[] sourceStrArray = equip.split("##");
+        	{   
+
+        		String[] sourceStrArray =  jsonString.getString("equipmentName").split("##");
         		if(sourceStrArray[Integer.parseInt(jsonString.getString("inputEquipmentNumber"))].equals("PC"))
         		{
         			if(jsonString.getString("lock").equals("lock"))	
@@ -416,6 +432,78 @@ public class MainSystemWebSocketHandler extends TextWebSocketHandler implements 
                         e.printStackTrace();
                     }
                 }        		
+        	}
+        	//保存实验配置
+        	if(jsonString.getString("type").equals("saveConfigureFile")){
+        		String cabinet_num = jsonString.getString("cabinet_num");
+        		String expId = jsonString.getString("expId");
+        		String expTaskOrder = jsonString.getString("expTaskOrder");
+        		String equipmentNumber = jsonString.getString("equipmentNumber");
+
+        		ExperimentSave es = new ExperimentSave(cabinet_num , expId, expTaskOrder,equipmentNumber);
+        		boolean success = es.save();
+        		       		
+        		jsonString.put("success", success);
+        		String mess = jsonString.toString();
+        		//发送到前端
+        		wss.sendMessage(new TextMessage(mess));	
+        	}
+        	//ping验证
+        	if(jsonString.getString("type").equals("pingVerify")){
+        		
+        		boolean success = true;
+        		
+        		String cabinet_num = jsonString.getString("cabinet_num");
+        		String expId = jsonString.getString("expId");
+        		String expTaskOrder = jsonString.getString("expTaskOrder");
+        		String equipmentNumber = jsonString.getString("equipmentNumber");
+        		
+        		String leftNUM_Str = jsonString.getString("leftNUM_Str");		//左端设备序号串，“##”隔开
+        		String rightNUM_Str = jsonString.getString("rightNUM_Str");	    //右端设备序号串，“##”隔开
+        		String leftport_Str = jsonString.getString("leftport_Str");	    //左端设备端口序号串，“##”隔开
+        		String rightport_Str = jsonString.getString("rightport_Str");	//右端设备端口序号串，“##”隔开
+        		
+        		//获取各网卡ip地址
+            	PCConfigureInfo pcInfo = new PCConfigureInfo(cabinet_num,Integer.parseInt(equipmentNumber));
+            	//获取地址
+            	String[] pcip = pcInfo.getIpAddress();
+            	if(pcip[0].equals("fail"))
+            		//获取地址失败
+            		success = false;
+            	else{
+            		//验证
+            		PingVerify pv = new PingVerify(cabinet_num,Integer.parseInt(equipmentNumber));
+            		String verifyResult[] = pv.getVerifyResult(pcip); 
+            		
+            		if(verifyResult[0].equals("fail"))
+            			//验证失败
+            			success = false;
+            		else{
+            			//修改实验模板验证表
+                		ExpVerifyCDAO vcDAO = new ExpVerifyCDAO();
+                		Integer expVerifyId = vcDAO.edit(expId, expTaskOrder);
+                		
+                		if(expVerifyId == 0)
+                			//修改验证表失败
+                			success = false;
+                		else{
+                			//删除相应的实验模板ping验证表
+                			ExpVerifyPingCDAO vpCDAO = new ExpVerifyPingCDAO();
+                			vpCDAO.delete(expVerifyId);
+                			
+                			boolean write = vpCDAO.edit(expVerifyId, equipmentNumber, pcip, verifyResult, 
+                										leftNUM_Str, rightNUM_Str, leftport_Str, rightport_Str);
+                			if(write)
+                			  success = true;
+                			else
+                			  success = false;
+                		}
+            		}
+            	}
+            	jsonString.put("success", success);
+				String mess = jsonString.toString();
+				//发送到前端
+				wss.sendMessage(new TextMessage(mess));		
         	}
         	//释放资源域
         	if(jsonString.getString("type").equals("release"))
@@ -606,8 +694,7 @@ public void FacilityInitial(String equipmentNumber, WebSocketSession wss,JSONObj
 	System.out.println("facility_NUM:" + facility_NUM);
 	FacilityConfigure facilityConfigure = new FacilityConfigure(cabinet_NUM,facility_NUM);
 	if(facilityConfigure.connect())
-	{
-		
+	{	
 		FacilityOutPut facilityOutPutThread = new FacilityOutPut(facilityConfigure.getInputStream(),wss,jsonString,expUsers,userMap);
 		facilityOutPutThread.start();
 		groupFacilityConfigureMap.put(userMap.get(wss) + equipmentNumber, facilityConfigure);
@@ -643,8 +730,7 @@ public void pcInitial(String equipmentNumber, WebSocketSession wss,JSONObject js
 	String facility_NUM = (Integer.parseInt(equipmentNumber) + 1)+"";
 	PCExecute pcExecute = new PCExecute(cabinet_NUM,facility_NUM);
 	if(pcExecute.connect())
-	{
-		
+	{	
 		FacilityOutPut facilityOutPutThread = new FacilityOutPut(pcExecute.getInputStream(),wss,jsonString,expUsers,userMap);
 		facilityOutPutThread.start();
 		groupPcConfigureMap.put(userMap.get(wss) + equipmentNumber, pcExecute);
@@ -672,9 +758,6 @@ public void pcCancel(String equipmentNumber, WebSocketSession wss,JSONObject jso
 	groupFacilityConfigureMap.remove(userMap.get(wss) + equipmentNumber);
 	groupPcConfigureMap.remove(userMap.get(wss) + equipmentNumber);
 }     
- 
-
-    
   //与第一层进行设备交互，输入命令，返回输出命令
     public void FacilityCommandConfigure(String equipmentNumber, String commandDetail,WebSocketSession wss)
     {
@@ -698,6 +781,7 @@ public void pcCancel(String equipmentNumber, WebSocketSession wss,JSONObject jso
 			}
 			pcExecute.execute(commandDetail);
     }
+
    //释放机柜资源
     public void releaseEquipment(WebSocketSession wss,JSONObject jsonString){
 		long start = System.currentTimeMillis();

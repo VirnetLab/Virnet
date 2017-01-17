@@ -9,13 +9,13 @@ public class ExpConfig implements java.io.Serializable {
 	private Integer expConfigId;
 	private Integer expId;
 	private Integer expTaskOrder;
-	private String  expConfigNum;
+	private Integer  expConfigNum;
 	
 	public ExpConfig() {
 		
 	}
 
-	public ExpConfig(Integer expConfigId, Integer expId, Integer expTaskOrder, String expConfigNum) {
+	public ExpConfig(Integer expConfigId, Integer expId, Integer expTaskOrder, Integer expConfigNum) {
 		super();
 		this.expConfigId = expConfigId;
 		this.expId = expId;
@@ -54,11 +54,11 @@ public class ExpConfig implements java.io.Serializable {
 		this.expTaskOrder = expTaskOrder;
 	}
 
-	public String getExpConfigNum() {
+	public Integer getExpConfigNum() {
 		return expConfigNum;
 	}
 
-	public void setExpConfigNum(String expConfigNum) {
+	public void setExpConfigNum(Integer expConfigNum) {
 		this.expConfigNum = expConfigNum;
 	}
 

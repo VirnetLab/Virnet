@@ -257,10 +257,6 @@ topo.undo = function(){
   });  
 }
 
-topo.save = function(){
-	
-}
-
 topo.submit = function(){
 
 	  //以下是提交连线的结果
@@ -276,7 +272,11 @@ topo.submit = function(){
 	  topoSend(position , leftNUM_Str , rightNUM_Str , leftport_Str , rightport_Str);
 	}
 
-topo.saveToDatabase = function(expTaskOrder,expId){        //TasexpTaskOrderkId为0时是初始拓扑
+topo.saveToDatabase = function(expTaskOrder){        //TasexpTaskOrderkId为0时是初始拓扑
+	
+	//开启加载页面
+	document.getElementById("cover").style.display = "block";
+    document.getElementById("layout").style.display = "block";
 	
 	var position = this.getDevPos();
 	var leftNUM_Str = this.left_nums.join("##");
@@ -286,5 +286,5 @@ topo.saveToDatabase = function(expTaskOrder,expId){        //TasexpTaskOrderkId�
 
 	console.log(position + ' '+leftNUM_Str + ' '+ rightNUM_Str + ' ' + leftport_Str + ' ' + rightport_Str);
 	
-	topoSaveToDatabase(position , leftNUM_Str , rightNUM_Str , leftport_Str , rightport_Str , expId ,expTaskOrder);
+	topoSaveToDatabase(position , leftNUM_Str , rightNUM_Str , leftport_Str , rightport_Str , expTaskOrder);
 }

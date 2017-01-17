@@ -19,8 +19,15 @@
  <body class="cbp-spmenu-push">
  
 <!-- 暂定实验号为1 应由UserManagement.jsp传过来 -->
-<%int expId = 2; %>
+<%int expId = 1; %>
+
+<!-- 连接websocket之后,加载页面前首先运行start,获取设备信息与任务信息 -->
 <body onload="start(<%=expId%>)">
+
+<!-- loading图标，当程序加载的时候出现 -->
+<div id="cover" class="cover"></div>
+<div id="layout" class="layout"><img src="./img/loading.gif" alt="" /></div>
+
  <div id = "override" >
          <input id="btnshow000" type="button" value="开始实验" onclick="showdiv()"/>
  </div>
@@ -136,7 +143,13 @@
 				
 				<button style="margin-left:20px" onclick="topo.save()">暂存</button>
 				<button onclick="topo.submit()">提交</button>	
-				<button onclick="topo.saveToDatabase(0,<%=expId%>)">初始拓扑</button>	   <!-- 参数为任务号，任务号为0表示初始拓扑  后面为实验Id-->		
+			</div>
+			
+			<div class = "TopoSaveButton" id = "TopoSaveButton">
+			</div>
+			<div class = "ConfigureSaveButton" id = "ConfigureSaveButton">
+			</div>
+			<div class = "pingVerifyButton" id = "pingVerifyButton">
 			</div>
 	</div>
 	<script src="./res/js/jtopo-0.4.8-min.js"></script>

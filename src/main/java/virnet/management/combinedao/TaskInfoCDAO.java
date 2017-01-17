@@ -135,4 +135,11 @@ public class TaskInfoCDAO {
 			return false;
 		
 	}
+	//任务个数
+	public Integer taskNum(String expId){
+		Integer EXPID = Integer.parseInt(expId);
+		@SuppressWarnings("unchecked")
+		List<ExpTask> tlist = this.tDAO.getListByProperty("expId", EXPID);
+		return tlist.size();
+	}
 }
