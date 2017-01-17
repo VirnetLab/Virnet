@@ -49,6 +49,21 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, 
     position: relative;
     text-decoration: none; 
 }
+.pingVerifyButton { position: absolute; top: 90%; left: 5%; width : 800px;}
+.pingVerifyButton button { 
+	width: 150px;
+    height: 30px;
+	background-color: #3bb3e0;
+    border: 1px solid #186f8f;
+    border-radius: 5px;
+    box-shadow: 0 1px 0 #7fd2f1 inset, 0 1px 0 #fff;
+    color: #fff;
+    font-family: "Open Sans",sans-serif;
+    font-size: 12px;
+    padding: 10px;
+    position: relative;
+    text-decoration: none; 
+}
 .release{
 	
 	width: 100px;

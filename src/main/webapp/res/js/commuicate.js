@@ -156,7 +156,18 @@ websocket.onmessage = function(event){
 			  alert("保存成功");
 		  }
 		  else{alert("保存失败");}
-	  }	  
+	  }	 
+	  if(object.type == "pingVerify")
+	  {	
+		  //关闭加载页面
+		  document.getElementById("cover").style.display = "none";
+		  document.getElementById("layout").style.display = "none";
+		  if(object.success == true)
+		  {
+			  alert("验证完成");
+		  }
+		  else{alert("验证被中断");}
+	  }
 }
 
 //连接关闭的回调方法
@@ -168,8 +179,6 @@ websocket.onclose = function(){
 window.onbeforeunload = function(){
 	websocket.close();
 }
-
-
 
 //关闭连接
 function closeWebSocket(){
@@ -537,6 +546,18 @@ function showHideCmdTab(order){
 			 }
 		 }
 }
+function pingVerify(taskOrder){
+	
+	//开启加载页面
+	document.getElementById("cover").style.display = "block";
+    document.getElementById("layout").style.display = "block";
+	
+	messageJson.type = "pingVerify";
+	messageJson.expTaskOrder = taskOrder;
+    var mess = JSON.stringify(messageJson);
+    websocket.send(mess);
+	
+}
 
 //按照任务号保存配置文件
 function saveConfigureFile(taskOrder){
@@ -588,6 +609,21 @@ function topoAndConfigureButton(){
 			newConfigureButton.innerHTML = "保存配置为任务"+i;
 	
 		buttonParent2.appendChild(newConfigureButton);
+		
+		//ping验证
+		var buttonParent3 = document.getElementById("pingVerifyButton");
+		var newPingVerifyButton = document.createElement('button');
+		newPingVerifyButton.setAttribute("id", "pingVerify");
+		//这里复用了editBtn的样式，以后可修改
+		newPingVerifyButton.setAttribute("class", "editBtn");
+		newPingVerifyButton.setAttribute("onclick", "pingVerify(" + i + ")");
+		
+		if(i==0)
+			newPingVerifyButton.innerHTML = "验证初始状态ping";
+		else
+			newPingVerifyButton.innerHTML = "验证任务"+i+"ping";
+
+		buttonParent3.appendChild(newPingVerifyButton);
 	}
 	
 	

@@ -35,13 +35,16 @@ public class ExperimentSave {
     private String cabinet_NUM;	
     private String expId;
     private String expTaskOrder;
+    private Integer equipmentNumber;
     
-    public ExperimentSave(String cabinet_num,String expId,String expTaskOrder) {
+    public ExperimentSave(String cabinet_num,String expId,String expTaskOrder,String equipmentNumber) {
     	this.cabinet_NUM = cabinet_num;
     	this.expId = expId;
     	this.expTaskOrder = expTaskOrder;
+    	this.equipmentNumber = Integer.parseInt(equipmentNumber);
     }
     public boolean save() {
+    
     	try {
 			connectToServer = new Socket(operationServerIP, operationServerPort);
 			//connectToServer.setSoTimeout(timeout);
@@ -60,6 +63,10 @@ public class ExperimentSave {
 			return false;
 		}
 		
+    	/*
+    	 * 交换机 路由器设备配置保存
+    	 */
+    	
 		JSONObject outputdata = new JSONObject();
 		try {
 			outputdata.put("command_name", "save");
@@ -146,15 +153,17 @@ public class ExperimentSave {
 		//修改实验模板配置表  其中 filenum和devicenum是等价的
 		ExpConfigCDAO ccDAO = new ExpConfigCDAO();
 		
-		//获得实验模板设备配置表的Id
-		Integer configId = ccDAO.edit(expId, expTaskOrder, filenum);
+		//获得实验模板设备配置表的Id，+4是PC的数量
+		Integer configId = ccDAO.edit(expId, expTaskOrder, filenum+4);
 		
 		//删除实验模板设备配置表相关信息，准备重写
 		ExpDeviceConfigCDAO dcDAO = new ExpDeviceConfigCDAO();
 		dcDAO.delete(configId);
+		
 		boolean flag = true;
 		//操作是否成功的返回值
         boolean success = true;
+        //每次保存一个除PC的设备的文件
 		for(int i = 0;i < filenum;i++) {			
 			try {
 				String thisfilepath = FILEPATH+"/";
@@ -208,6 +217,26 @@ public class ExperimentSave {
 			filepath_info = filepath_info + filepath_arr[j] + "##";
 		}
 		filepath_info = filepath_info.substring(0, filepath_info.length() - 2);
+		
+
+    	/*
+		 * 网卡配置保存(复用了向网卡发送get命令的方法)，此处没有做文件保存
+		 */
+		Integer PCNumber =  equipmentNumber - 3;
+		PCConfigureInfo pcInfo = new PCConfigureInfo(cabinet_NUM,equipmentNumber);
+		//Info保存了4个PC的配置信息，首字符串是操作状态信息
+		String Info[] = pcInfo.getPCConfigureInfo();
+		
+		if(Info[0].equals("success")){
+			for(int k=0;k<4;k++){
+			//写入数据库
+	        flag = dcDAO.edit(configId, PCNumber+k, Info[k+1]);
+        	if(flag == false)
+        		success = false;
+			}
+		}
+		else  
+			success = false;
 		
 		return success;
     }

@@ -149,6 +149,8 @@
 			</div>
 			<div class = "ConfigureSaveButton" id = "ConfigureSaveButton">
 			</div>
+			<div class = "pingVerifyButton" id = "pingVerifyButton">
+			</div>
 	</div>
 	<script src="./res/js/jtopo-0.4.8-min.js"></script>
 	<script src="./res/js/topoCore.js"></script>

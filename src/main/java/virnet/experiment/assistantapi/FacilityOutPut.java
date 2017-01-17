@@ -73,6 +73,7 @@ public class FacilityOutPut extends Thread {
             } 	            
 		}
 	}
+	
 	public void stopThread(){
 		this.stop = true;
 	}
