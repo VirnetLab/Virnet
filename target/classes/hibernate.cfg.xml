@@ -24,6 +24,7 @@
         <property name="hibernate.jdbc.fetch_size">100</property>  
         <property name="hibernate.jdbc.batch_size">30</property>  
   
+        <mapping resource="virnet/management/entity/hbm/Appointment.hbm.xml" />
         <mapping resource="virnet/management/entity/hbm/Power.hbm.xml" />
         <mapping resource="virnet/management/entity/hbm/Character.hbm.xml" />
         <mapping resource="virnet/management/entity/hbm/CharacterPower.hbm.xml" />

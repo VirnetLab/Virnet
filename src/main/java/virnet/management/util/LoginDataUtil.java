@@ -43,6 +43,7 @@ public class LoginDataUtil {
 		case 12: idname="my-exp";break;
 		case 13: idname="enter-exp";break;
 		case 14: idname="physicsMachines-management";break;
+		case 15: idname="exp-appointment";break;
 		default: idname="error"; break;
 		}
 		this.idname = idname;

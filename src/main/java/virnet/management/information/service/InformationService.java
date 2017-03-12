@@ -41,7 +41,8 @@ public class InformationService {
 		case "my-group": query = new MyGroup(); break;
 		case "my-exp": query = new MyExp(); break;
 		case "enter-exp": query = new EnterExp(); break;
-		case "physicsMachines-management":query =new PhysicsMachinesManagement();break;
+		case "physicsMachines-management":query = new PhysicsMachinesManagement();break;
+		case "exp-appointment":query = new ExpAppointment(); break;
 		default: break;
 		}
 		
