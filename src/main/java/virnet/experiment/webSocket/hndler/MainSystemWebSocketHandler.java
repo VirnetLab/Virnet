@@ -34,6 +34,12 @@ import virnet.experiment.combinedao.ExpTopoCDAO;
 import virnet.experiment.combinedao.ExpTopoPositionCDAO;
 import virnet.experiment.combinedao.ExpVerifyCDAO;
 import virnet.experiment.combinedao.ExpVerifyPingCDAO;
+import virnet.experiment.combinedao.ResultConnectCDAO;
+import virnet.experiment.combinedao.ResultTaskCDAO;
+import virnet.experiment.combinedao.ResultTopoCDAO;
+import virnet.experiment.combinedao.ResultTopoPositionCDAO;
+import virnet.experiment.combinedao.ResultVerifyCDAO;
+import virnet.experiment.combinedao.ResultVerifyPingCDAO;
 import virnet.experiment.dao.ExpTopoDAO;
 import virnet.experiment.entity.ExpTopo;;
 
@@ -321,29 +327,71 @@ public class MainSystemWebSocketHandler extends TextWebSocketHandler implements 
             		String rightport_Str = jsonString.getString("rightport_Str");	//右端设备端口序号串，“##”隔开
             		String position = jsonString.getString("position");				//设备的位置 设备的X，Y坐标以空格相隔，设备间以逗号相隔
             		String expId = jsonString.getString("expId");
-            		String expTaskOrder = jsonString.getString("expTaskOrder");           		
+            		String expTaskOrder = jsonString.getString("expTaskOrder");  
+            		String expCaseId = jsonString.getString("expCaseId");
+            		String expRole = jsonString.getString("expRole");
             		
-            		//修改实验模板拓扑表
-            		ExpTopoCDAO tcDAO = new ExpTopoCDAO();
-            		Integer ExpTopoId = tcDAO.edit(expId,expTaskOrder,leftNUM_Str);
-            		if(ExpTopoId!=0){
-            			//修改实验模板连接表
-            			ExpConnectCDAO cCDAO = new ExpConnectCDAO();
-            			boolean connectSuccess = cCDAO.edit(ExpTopoId, leftNUM_Str, rightNUM_Str, leftport_Str, rightport_Str);
+            		//学生实验保存到结果表
+            		if(expRole.equals("stu")){ 
             			
-            			//修改实验模板拓扑位置表
-            			ExpTopoPositionCDAO tpCDAO = new ExpTopoPositionCDAO();
-            			boolean positionSuccess = tpCDAO.edit(ExpTopoId,position);
+            			//修改实验结果拓扑表
+            			ResultTaskCDAO taskcDAO = new ResultTaskCDAO();
+            			Integer resultTaskId = taskcDAO.getResultTaskId(expCaseId, expId, expTaskOrder);
             			
-            			if(connectSuccess&&positionSuccess)
-            				jsonString.put("success", true);
-            			else
-            				jsonString.put("success", false);
-            		}
-            		else{
-            			System.out.println("false");
-            			jsonString.put("success", false);
+                		if(resultTaskId!=0){
+                			ResultTopoCDAO rtcDAO = new ResultTopoCDAO();
+                    		Integer resultTopoId = rtcDAO.edit(resultTaskId,leftNUM_Str);
+                    		
+                    		if(resultTopoId!=0){
+                    		
+                    			//修改实验结果连接表
+                    			ResultConnectCDAO rcCDAO = new ResultConnectCDAO();
+                    			boolean connectSuccess = rcCDAO.edit(resultTopoId, leftNUM_Str, rightNUM_Str, leftport_Str, rightport_Str);
+                    			
+                    			//修改实验结果位置表
+                    			ResultTopoPositionCDAO rtpcDAO = new ResultTopoPositionCDAO();
+                    			boolean positionSuccess = rtpcDAO.edit(resultTopoId, position);
+                    			
+                    			if(connectSuccess&&positionSuccess)
+                    				jsonString.put("success", true);
+                    			else
+                    				jsonString.put("success", false);
+                    		}
+                    		else
+                    			jsonString.put("success", false);
+                		}
+                		else
+                			jsonString.put("success", false);
             		}	
+            		
+            		//管理员保存到模板表
+            		else if(expRole.equals("GM")){
+            			
+            			//修改实验模板拓扑表
+                		ExpTopoCDAO tcDAO = new ExpTopoCDAO();
+                		Integer ExpTopoId = tcDAO.edit(expId,expTaskOrder,leftNUM_Str);
+                		if(ExpTopoId!=0){
+                			//修改实验模板连接表
+                			ExpConnectCDAO cCDAO = new ExpConnectCDAO();
+                			boolean connectSuccess = cCDAO.edit(ExpTopoId, leftNUM_Str, rightNUM_Str, leftport_Str, rightport_Str);
+                			
+                			//修改实验模板拓扑位置表
+                			ExpTopoPositionCDAO tpCDAO = new ExpTopoPositionCDAO();
+                			boolean positionSuccess = tpCDAO.edit(ExpTopoId,position);
+                			
+                			if(connectSuccess&&positionSuccess)
+                				jsonString.put("success", true);
+                			else
+                				jsonString.put("success", false);
+                		}
+                		else{
+                			System.out.println("false");
+                			jsonString.put("success", false);
+                		}	
+            		}
+            		else
+            			jsonString.put("success", false);
+            		
             		String mess = jsonString.toString();
             		//发送到前端
             		wss.sendMessage(new TextMessage(mess));
@@ -398,7 +446,6 @@ public class MainSystemWebSocketHandler extends TextWebSocketHandler implements 
         	//加锁域
         	if(jsonString.getString("type").equals("lock"))
         	{   
-
         		String[] sourceStrArray =  jsonString.getString("equipmentName").split("##");
         		if(sourceStrArray[Integer.parseInt(jsonString.getString("inputEquipmentNumber"))].equals("PC"))
         		{
@@ -439,10 +486,31 @@ public class MainSystemWebSocketHandler extends TextWebSocketHandler implements 
         		String expId = jsonString.getString("expId");
         		String expTaskOrder = jsonString.getString("expTaskOrder");
         		String equipmentNumber = jsonString.getString("equipmentNumber");
-
-        		ExperimentSave es = new ExperimentSave(cabinet_num , expId, expTaskOrder,equipmentNumber);
-        		boolean success = es.save();
-        		       		
+        		String expRole = jsonString.getString("expRole");
+        		
+        		boolean success = false;
+        		//保存到实验结果的表
+        		if(expRole.equals("stu")){
+        			
+        			String expCaseId = jsonString.getString("expCaseId");
+        			ResultTaskCDAO taskcDAO = new ResultTaskCDAO();
+        			Integer resultTaskId = taskcDAO.getResultTaskId(expCaseId, expId, expTaskOrder);
+        			
+        			ExperimentSave es = new ExperimentSave(cabinet_num , expId, expTaskOrder,equipmentNumber,expRole,resultTaskId);
+            		success = es.save();
+        			
+        		}
+        		//保存到实验模板的表
+        		else if(expRole.equals("GM")){
+        			
+        			//管理员操作不需要最后一个参数
+        			ExperimentSave es = new ExperimentSave(cabinet_num , expId, expTaskOrder,equipmentNumber,expRole,0);
+            		success = es.save();
+        		}
+        		else{
+        			success = false;
+        		} 		
+        		
         		jsonString.put("success", success);
         		String mess = jsonString.toString();
         		//发送到前端
@@ -463,6 +531,8 @@ public class MainSystemWebSocketHandler extends TextWebSocketHandler implements 
         		String leftport_Str = jsonString.getString("leftport_Str");	    //左端设备端口序号串，“##”隔开
         		String rightport_Str = jsonString.getString("rightport_Str");	//右端设备端口序号串，“##”隔开
         		
+        		String expRole = jsonString.getString("expRole");
+        		
         		//获取各网卡ip地址
             	PCConfigureInfo pcInfo = new PCConfigureInfo(cabinet_num,Integer.parseInt(equipmentNumber));
             	//获取地址
@@ -479,25 +549,61 @@ public class MainSystemWebSocketHandler extends TextWebSocketHandler implements 
             			//验证失败
             			success = false;
             		else{
-            			//修改实验模板验证表
-                		ExpVerifyCDAO vcDAO = new ExpVerifyCDAO();
-                		Integer expVerifyId = vcDAO.edit(expId, expTaskOrder);
-                		
-                		if(expVerifyId == 0)
-                			//修改验证表失败
-                			success = false;
-                		else{
-                			//删除相应的实验模板ping验证表
-                			ExpVerifyPingCDAO vpCDAO = new ExpVerifyPingCDAO();
-                			vpCDAO.delete(expVerifyId);
-                			
-                			boolean write = vpCDAO.edit(expVerifyId, equipmentNumber, pcip, verifyResult, 
-                										leftNUM_Str, rightNUM_Str, leftport_Str, rightport_Str);
-                			if(write)
-                			  success = true;
-                			else
-                			  success = false;
-                		}
+            			
+            			Integer VerifyId = 0;
+            			
+            			if(expRole.equals("GM")){   //实验模板
+            				//修改实验模板验证表
+                    		ExpVerifyCDAO vcDAO = new ExpVerifyCDAO();
+                    		VerifyId = vcDAO.edit(expId, expTaskOrder);
+                    		
+                    		if(VerifyId == 0)
+                    			//修改验证表失败
+                    			success = false;
+                    		else{
+                    			//删除相应的实验模板ping验证表
+                    			ExpVerifyPingCDAO vpCDAO = new ExpVerifyPingCDAO();
+                    			vpCDAO.delete(VerifyId);
+                    			
+                    			boolean write = vpCDAO.edit(VerifyId, equipmentNumber, pcip, verifyResult, 
+                    										leftNUM_Str, rightNUM_Str, leftport_Str, rightport_Str);
+                    			if(write)
+                    			  success = true;
+                    			else
+                    			  success = false;
+                    		}
+            			}
+            			
+            			else if(expRole.equals("stu")){    //学生实验结果
+            				
+            				//获取实验结果任务ID
+            				String expCaseId = jsonString.getString("expCaseId");
+                			ResultTaskCDAO taskcDAO = new ResultTaskCDAO();
+                			Integer resultTaskId = taskcDAO.getResultTaskId(expCaseId, expId, expTaskOrder);
+            				
+            				//修改实验结果验证表
+                    		ResultVerifyCDAO rvcDAO = new ResultVerifyCDAO();
+                    		VerifyId = rvcDAO.edit(resultTaskId);
+                    		
+                    		if(VerifyId == 0)
+                    			//修改验证表失败
+                    			success = false;
+                    		else{
+                    			//删除相应的实验模板ping验证表
+                    			ResultVerifyPingCDAO rvpCDAO = new ResultVerifyPingCDAO();
+                    			rvpCDAO.delete(VerifyId);
+                    			
+                    			boolean write = rvpCDAO.edit(VerifyId, equipmentNumber, pcip, verifyResult, 
+                    										leftNUM_Str, rightNUM_Str, leftport_Str, rightport_Str);
+                    			if(write)
+                    			  success = true;
+                    			else
+                    			  success = false;
+                    		}
+            			}
+            			else
+            				success = false;
+            			
             		}
             	}
             	jsonString.put("success", success);
@@ -749,7 +855,7 @@ public void pcCancel(String equipmentNumber, WebSocketSession wss,JSONObject jso
  	facilityOutPutThread.stopThread();
 	System.out.println("结束配置");
 	try {
-		Thread.sleep(3000);
+		Thread.sleep(3000);  
 	} catch (InterruptedException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

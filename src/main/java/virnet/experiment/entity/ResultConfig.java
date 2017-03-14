@@ -9,13 +9,13 @@ public class ResultConfig implements java.io.Serializable {
 	private static final long serialVersionUID = 7855981000166010468L;
 	private Integer resultConfigId;
 	private Integer resultTaskId;
-	private String  resultConfigNum;
+	private Integer  resultConfigNum;
 	
 	public ResultConfig() {
 
 	}
 
-	public ResultConfig(Integer resultConfigId, Integer resultTaskId, String resultConfigNum) {
+	public ResultConfig(Integer resultConfigId, Integer resultTaskId, Integer resultConfigNum) {
 		super();
 		this.resultConfigId = resultConfigId;
 		this.resultTaskId = resultTaskId;
@@ -38,11 +38,11 @@ public class ResultConfig implements java.io.Serializable {
 		this.resultTaskId = resultTaskId;
 	}
 
-	public String getResultConfigNum() {
+	public Integer getResultConfigNum() {
 		return resultConfigNum;
 	}
 
-	public void setResultConfigNum(String resultConfigNum) {
+	public void setResultConfigNum(Integer resultConfigNum) {
 		this.resultConfigNum = resultConfigNum;
 	}
 

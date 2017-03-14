@@ -18,6 +18,8 @@ import org.json.JSONObject;
 
 import virnet.experiment.combinedao.ExpConfigCDAO;
 import virnet.experiment.combinedao.ExpDeviceConfigCDAO;
+import virnet.experiment.combinedao.ResultConfigCDAO;
+import virnet.experiment.combinedao.ResultDeviceConfigCDAO;
 
 public class ExperimentSave {
 	
@@ -36,12 +38,16 @@ public class ExperimentSave {
     private String expId;
     private String expTaskOrder;
     private Integer equipmentNumber;
+    private String expRole;
+    private Integer resultTaskId;
     
-    public ExperimentSave(String cabinet_num,String expId,String expTaskOrder,String equipmentNumber) {
+    public ExperimentSave(String cabinet_num,String expId,String expTaskOrder,String equipmentNumber,String expRole,Integer resultTaskId) {
     	this.cabinet_NUM = cabinet_num;
     	this.expId = expId;
     	this.expTaskOrder = expTaskOrder;
     	this.equipmentNumber = Integer.parseInt(equipmentNumber);
+    	this.expRole = expRole;
+    	this.resultTaskId = resultTaskId;
     }
     public boolean save() {
     
@@ -150,15 +156,34 @@ public class ExperimentSave {
 		System.out.println("文件数"+filenum);
 		String[] filepath_arr = new String[filenum];
 		
-		//修改实验模板配置表  其中 filenum和devicenum是等价的
-		ExpConfigCDAO ccDAO = new ExpConfigCDAO();
-		
-		//获得实验模板设备配置表的Id，+4是PC的数量
-		Integer configId = ccDAO.edit(expId, expTaskOrder, filenum+4);
-		
-		//删除实验模板设备配置表相关信息，准备重写
 		ExpDeviceConfigCDAO dcDAO = new ExpDeviceConfigCDAO();
-		dcDAO.delete(configId);
+		ResultDeviceConfigCDAO rdcDAO = new ResultDeviceConfigCDAO();
+		Integer configId = 0;
+		
+		if (expRole.equals("GM")){
+			
+			//修改实验模板配置表  其中 filenum和devicenum是等价的
+			ExpConfigCDAO ccDAO = new ExpConfigCDAO();
+			
+			//获得实验模板设备配置表的Id，+4是PC的数量
+			configId = ccDAO.edit(expId, expTaskOrder, filenum+4);
+			
+			//删除实验模板设备配置表相关信息，准备重写
+			dcDAO.delete(configId);
+		}
+		else if(expRole.equals("stu")){
+			
+			//修改实验结果配置表  其中 filenum和devicenum是等价的
+			ResultConfigCDAO rcDAO = new ResultConfigCDAO();
+			
+			//获得实验结果设备配置表的Id，+4是PC的数量
+			configId = rcDAO.edit(resultTaskId,filenum+4);
+			
+			//删除实验结果设备配置表相关信息，准备重写
+			rdcDAO.delete(configId);	
+		}
+		else
+			return false;
 		
 		boolean flag = true;
 		//操作是否成功的返回值
@@ -201,7 +226,16 @@ public class ExperimentSave {
                     if(sum==len){
                     	//filenum是从0开始的，因此设备序号应为i+1
                     	System.out.println(configInfo);
-                    	flag = dcDAO.edit(configId, i+1, configInfo);
+                    	
+                    	if(expRole.equals("GM")){
+                    		flag = dcDAO.edit(configId, i+1, configInfo);
+                    	}
+                    	else if(expRole.equals("stu")){
+                    		flag = rdcDAO.edit(configId, i+1, configInfo);
+                    	}
+                    	else
+                    		flag = false;
+                    	
                     	if(flag == false)
                     		success = false;
                     	break;
@@ -230,7 +264,14 @@ public class ExperimentSave {
 		if(Info[0].equals("success")){
 			for(int k=0;k<4;k++){
 			//写入数据库
-	        flag = dcDAO.edit(configId, PCNumber+k, Info[k+1]);
+			if(expRole.equals("GM")){
+            	flag = dcDAO.edit(configId, PCNumber+k, Info[k+1]);
+            }
+            else if(expRole.equals("stu")){
+            	flag = rdcDAO.edit(configId, PCNumber+k, Info[k+1]);
+            }
+            else
+            	flag = false;
         	if(flag == false)
         		success = false;
 			}
