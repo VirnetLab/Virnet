@@ -15,7 +15,7 @@
         <property name="resultTaskId" type="java.lang.Integer">
             <column name="RESULTVERIFY_ResultTask_ID" length="65535" not-null="true" />
         </property>
-        <property name="resultverifyType" type="java.lang.Integer">
+        <property name="resultVerifyType" type="java.lang.Integer">
             <column name="RESULTVERIFY_Type" length="65535"  not-null="true"/>
         </property>
     </class>

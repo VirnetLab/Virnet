@@ -8,17 +8,17 @@ public class ResultVerify implements java.io.Serializable {
 	 */
 	private Integer resultVerifyId;
 	private Integer resultTaskId;
-	private Integer resultverifyType;
+	private Integer resultVerifyType;
 	
 	public ResultVerify() {
 
 	}
 
-	public ResultVerify(Integer resultVerifyId, Integer resultTaskId, Integer resultverifyType) {
+	public ResultVerify(Integer resultVerifyId, Integer resultTaskId, Integer resultVerifyType) {
 		super();
 		this.resultVerifyId = resultVerifyId;
 		this.resultTaskId = resultTaskId;
-		this.resultverifyType = resultverifyType;
+		this.resultVerifyType = resultVerifyType;
 	}
 
 	public ResultVerify(Integer resultVerifyId, Integer resultTaskId) {
@@ -43,11 +43,11 @@ public class ResultVerify implements java.io.Serializable {
 		this.resultTaskId = resultTaskId;
 	}
 
-	public Integer getResultverifyType() {
-		return resultverifyType;
+	public Integer getResultVerifyType() {
+		return resultVerifyType;
 	}
 
-	public void setResultverifyType(Integer resultverifyType) {
-		this.resultverifyType = resultverifyType;
+	public void setResultVerifyType(Integer resultVerifyType) {
+		this.resultVerifyType = resultVerifyType;
 	}
 }

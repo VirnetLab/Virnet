@@ -61,7 +61,8 @@
         <mapping resource="virnet/experiment/entity/hbm/ResultConfig.hbm.xml" /> 
         <mapping resource="virnet/experiment/entity/hbm/ResultDeviceConfig.hbm.xml" /> 
         <mapping resource="virnet/experiment/entity/hbm/ResultVerify.hbm.xml" />
-        <mapping resource="virnet/experiment/entity/hbm/ResultVerifyPing.hbm.xml" />   
+        <mapping resource="virnet/experiment/entity/hbm/ResultVerifyPing.hbm.xml" />  
+        <mapping resource="virnet/experiment/entity/hbm/ResultTopoPosition.hbm.xml" />  
             
 </session-factory>  
 </hibernate-configuration>  

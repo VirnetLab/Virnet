@@ -20,10 +20,16 @@
  
 <!-- 暂定实验号为1 应由UserManagement.jsp传过来 -->
 <%int expId = 1; %>
+<!-- 暂定实验角色为stu /管理员则为  GM 应由UserManagement.jsp传过来 -->
+<%//String expRole="'stu'";%>
+<%String expRole="'GM'";%>
+<!-- 暂定实验实例号为999 应由UserManagement.jsp传过来 -->
+<%int expCaseId= 999;%>
+
 
 <!-- 连接websocket之后,加载页面前首先运行start,获取设备信息与任务信息 -->
-<body onload="start(<%=expId%>)">
-
+<body onload="start(<%=expId%>,<%=expRole%>,<%=expCaseId%>)">
+                             
 <!-- loading图标，当程序加载的时候出现 -->
 <div id="cover" class="cover"></div>
 <div id="layout" class="layout"><img src="./img/loading.gif" alt="" /></div>

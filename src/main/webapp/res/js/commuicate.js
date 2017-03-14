@@ -23,15 +23,17 @@ var messageJson = {
 					"inputEquipmentNumber":"default",   //当前操作的设备号
 					"equipmentNumStr":"default",  	//设备序号串
 					"equipmentPortStr":"default",	//设备序号串对应下的各设备可用端口号串
-					"position":"default",		//设备的位置 设备的X，Y坐标以空格相隔，设备间以逗号相隔
-					"leftNUM_Str":"default",   	//左端设备序号串，“##”隔开
-					"rightNUM_Str":"default",  	//右端设备序号串，“##”隔开
-					"leftport_Str":"default", 	//左端设备端口序号串，“##”隔开
-					"rightport_Str":"default",	//右端设备端口序号串，“##”隔开
+					"position":"default",			//设备的位置 设备的X，Y坐标以空格相隔，设备间以逗号相隔
+					"leftNUM_Str":"default",   		//左端设备序号串，“##”隔开
+					"rightNUM_Str":"default",  		//右端设备序号串，“##”隔开
+					"leftport_Str":"default", 		//左端设备端口序号串，“##”隔开
+					"rightport_Str":"default",		//右端设备端口序号串，“##”隔开
 					"success":"default",
-					"expId":"default",          //实验Id     
-					"expTaskOrder":"default",    //当前操作的任务序号
-					"expTaskNum":"default"     //本实验的任务个数（包含初始）
+					"expId":"default",          	//实验Id     
+					"expTaskOrder":"default",    	//当前操作的任务序号
+					"expTaskNum":"default",     	//本实验的任务个数（包含初始）
+					"expRole":"default",      	 	//实验角色 学生或管理员
+					"expCaseId":"default"         	//实验实例号
 				  };
 //判断当前浏览器是否支持WebSocket
   if ('WebSocket' in window) {
@@ -184,9 +186,11 @@ window.onbeforeunload = function(){
 function closeWebSocket(){
 	websocket.close();
 }
-function start(expId){
+function start(expId,expRole,expCaseId){
 	messageJson.type = "requestEquipment";
 	messageJson.expId = expId;
+	messageJson.expRole = expRole;
+	messageJson.expCaseId = expCaseId;
 	var mess = JSON.stringify(messageJson);
 	websocket.send(mess);
 }
@@ -577,9 +581,14 @@ function topoAndConfigureButton(){
 	
 	var expId = messageJson.expId;
 	var taskNum = parseInt(messageJson.expTaskNum);
+	var expRole = messageJson.expRole;
 
 	//按照任务个数动态生成按钮,循环中taskNum加1是因为任务0不在任务表中
 	for(var i=0;i<taskNum+1;i++){
+		
+		if(i==0&&expRole=="stu")     //学生没有权限更改初始拓扑，配置，ping状态
+			continue;
+		
 		//拓扑
 		var buttonParent1 = document.getElementById("TopoSaveButton");
 		var newTopoButton = document.createElement('button');

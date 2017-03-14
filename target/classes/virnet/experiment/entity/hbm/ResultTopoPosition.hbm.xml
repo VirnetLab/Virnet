@@ -9,7 +9,7 @@
 <hibernate-mapping>
     <class name="virnet.experiment.entity.ResultTopoPosition" table="resulttopoposition" catalog="virnet">
         <id name="resultTopoPositionId" type="java.lang.Integer">
-            <column name=RESULT_TOPO_POS_ID />
+            <column name="RESULT_TOPO_POS_ID" />
             <generator class="identity" />
         </id>
         <property name="resultTopoId" type="java.lang.Integer">
